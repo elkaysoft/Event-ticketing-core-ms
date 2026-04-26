@@ -16,6 +16,9 @@ namespace ETS.Infrastructure.Persistence.Configuration
             builder.Property(x => x.FullName).HasMaxLength(500).IsRequired();
             builder.Property(x => x.PhoneNumber).HasMaxLength(20);
             builder.Property(x => x.Password).HasMaxLength(500).IsRequired();
+            builder.Property(x => x.Status).HasConversion<int>().IsRequired().IsRequired();
+            
+            
 
         }
     }

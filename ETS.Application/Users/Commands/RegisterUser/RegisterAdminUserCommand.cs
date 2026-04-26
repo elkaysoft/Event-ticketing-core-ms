@@ -8,11 +8,6 @@ using ETS.Domain.Extensions;
 using ETS.Domain.Repositories;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ETS.Application.Users.Commands.RegisterUser
 {
@@ -45,6 +40,17 @@ namespace ETS.Application.Users.Commands.RegisterUser
         private readonly IUnitOfWork _unitOfWork;
         public readonly IUserRepository _userRepository;
 
+        public RegisterAdminUserCommandHandler(ILogger<RegisterAdminUserCommandHandler> logger,
+            IUnitOfWork unitOfWork,
+            IUserRepository userRepository)
+        {
+            _logger = logger;
+            _unitOfWork = unitOfWork;
+            _userRepository = userRepository;
+        }
+
+
+
 
         public async Task<Result<UserDto>> Handle(RegisterAdminUserCommand request, CancellationToken cancellationToken)
         {
@@ -58,10 +64,11 @@ namespace ETS.Application.Users.Commands.RegisterUser
                 }
 
                 var temporaryPassword = Cryptography.CharGenerator.genID(10, CharacterSet.ALPHA_NUMERIC_NON_CASE);
+                var hashedPassword = BCrypt.Net.BCrypt.HashPassword(temporaryPassword);
                 var user = User.Create(request.FullName,
                     request.EmailAddress,
                     request.PhoneNumber,
-                    temporaryPassword,
+                    hashedPassword,
                     request.Role);
 
                 _userRepository.Add(user);

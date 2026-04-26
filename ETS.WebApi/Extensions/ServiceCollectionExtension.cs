@@ -117,6 +117,7 @@ namespace ETS.WebApi.Extensions
             app.UseExceptionHandler();
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.MapControllers();
 
             return app;
         }

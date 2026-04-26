@@ -1,11 +1,13 @@
 ﻿using ETS.Domain.Contracts;
 using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace ETS.Infrastructure.Authentication
 {
     internal sealed class UserContext : IUserContext
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private ClaimsPrincipal? Principal => _httpContextAccessor.HttpContext?.User;
 
         public UserContext(IHttpContextAccessor httpContextAccessor)
         {
@@ -13,27 +15,19 @@ namespace ETS.Infrastructure.Authentication
         }
 
         public Guid? UserId =>
-            _httpContextAccessor
-            .HttpContext?
-            .User
+            Principal
             .GetUserId();
 
         public string? UserEmail =>
-            _httpContextAccessor
-            .HttpContext?
-            .User
+            Principal
             .GetUserEmail();
 
         public string? UserPhone => 
-            _httpContextAccessor
-            ?.HttpContext? 
-            .User
+            Principal
             .GetUserPhone();
 
         public string? UserName =>
-            _httpContextAccessor
-            ? .HttpContext?
-            .User
+            Principal
             .GetUserFullName();
 
     }

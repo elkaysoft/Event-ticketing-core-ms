@@ -7,6 +7,7 @@
         public bool RequireHttpsMetadata { get; set; }
         public string Issuer { get; set; } = string.Empty;
         public string IssuerKey { get; set; } = string.Empty;
-        public int DurationInMinutes { get; set; }
+        public int TokenExpiryInSeconds { get; set; }
+        public int RefreshTokenExpiryInSeconds { get; set; }
     }
 }

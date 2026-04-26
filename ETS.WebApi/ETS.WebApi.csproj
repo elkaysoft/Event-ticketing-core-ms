@@ -4,10 +4,11 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>375e99fe-d99c-460a-8de7-7419d30f2394</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.14" />
+    <!--<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.14" />-->
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.14">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

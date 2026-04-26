@@ -23,17 +23,19 @@ namespace ETS.WebApi.Endpoints.v1
         /// </summary>
         protected readonly IUserContext _userService;
 
-        protected ISender _mediator => HttpContext.RequestServices.GetRequiredService<ISender>();
+        protected ISender _mediator;
 
         protected IActionResult OkEmptyResult() => Ok();
 
-        protected AuthControllerBase(ILogger<T> logger, 
+        protected AuthControllerBase(ILogger<T> logger,
             IConfiguration config,
-            IUserContext userService)
+            IUserContext userService,
+            ISender mediator)
         {
             _logger = logger;
             _config = config;
             _userService = userService;
+            _mediator = mediator;
         }
     }
 }

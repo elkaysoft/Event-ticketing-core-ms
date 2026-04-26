@@ -10,6 +10,11 @@ namespace ETS.Domain.Entities
         public string? PhoneNumber { get; private set; } = string.Empty;
         public string Password { get; private set; } = string.Empty;
         public RoleEnum Role { get; private set; }
+        public int FailedLoginCount { get; private set; }
+        public UserStatus Status { get; private set; }
+        public DateTime? DeactivationDate { get; private set; }
+        public DateTime? LastLoginDate { get; private set; }
+        public DateTime? LastPasswordChangeDate { get; private set; }
 
         public static User Create(string fullName, string email, string phoneNumber, string password, RoleEnum role)
         {
@@ -19,6 +24,21 @@ namespace ETS.Domain.Entities
         public void ChangePassword(string newPassword)
         {
             Password = newPassword;
+        }
+
+        public void ResetFailedLoginCount()
+        {
+            FailedLoginCount = 0;
+            LastLoginDate = DateTime.UtcNow;
+        }
+        public void IncrementFailedLoginCount()
+        {
+            FailedLoginCount++;
+        }
+         
+        public void UpdateStatus(UserStatus newStatus)
+        {
+            Status = newStatus;
         }
 
     }

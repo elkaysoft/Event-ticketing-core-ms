@@ -74,10 +74,11 @@ namespace ETS.Application.Users.Commands.RegisterUser
                     return Result.Failure<UserDto>(UserErrors.AlreadyExists);
                 }
 
+                var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
                 var user = User.Create(request.FullName,
                     request.EmailAddress,
                     request.PhoneNumber,
-                    request.Password,
+                    hashedPassword,
                     request.Role);
 
                 _userRepository.Add(user); 
