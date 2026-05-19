@@ -10,6 +10,7 @@ namespace ETS.Domain.Entities
         public string BannerUrl { get; private set; } = string.Empty;
         public DateTime EventDate { get; private set; }
         public string KickoffTime { get; private set; } = string.Empty;
+        public string EndTime { get; private set; } = string.Empty;
         public virtual IReadOnlyCollection<EventCategory> EventCategories { get; set; }
 
         public static Events Create(string title, 

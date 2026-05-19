@@ -18,6 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Events\Commands\Delete\" />
+    <Folder Include="Events\Commands\Update\" />
+    <Folder Include="Events\Queries\" />
     <Folder Include="Users\Queries\GetSingleUser\" />
   </ItemGroup>
 

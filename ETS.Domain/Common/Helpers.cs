@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -33,5 +35,32 @@ namespace ETS.Domain.Common
                 }
             });
         }
+
+        public static RsaSecurityKey CreateRsaSecurityKey(string issuerKey)
+        {
+            var rsa = RSA.Create();
+
+            if (issuerKey.TrimStart().StartsWith("-----BEGIN", StringComparison.OrdinalIgnoreCase))
+            {
+                // PEM format - replace literal \n escapes from JSON config with actual newlines
+                var pemKey = issuerKey.Replace("\\n", "\n");
+                rsa.ImportFromPem(pemKey);
+            }
+            else if (issuerKey.TrimStart().StartsWith("<", StringComparison.OrdinalIgnoreCase))
+            {
+                // XML format (legacy keys)
+                rsa.FromXmlString(issuerKey);
+            }
+            else
+            {
+                throw new InvalidOperationException(
+                    "Unsupported RSA key format. The IssuerKey must be in PEM (-----BEGIN PUBLIC KEY-----) or XML (<RSAKeyValue>) format.");
+            }
+
+            return new RsaSecurityKey(rsa);
+        }
+
+
+
     }
 }

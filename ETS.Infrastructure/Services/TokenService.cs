@@ -62,18 +62,24 @@ namespace ETS.Infrastructure.Services
                     new("phoneNumber", user.PhoneNumber!)
                 };
 
-                var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authOptions.IssuerKey));
-                var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
+                var signingKey = Helpers.CreateRsaSecurityKey(_authOptions.IssuerKey);
 
-                var jwtSecurityToken = new JwtSecurityToken(
-                    issuer: _authOptions.Issuer,
-                    audience: _authOptions.Audience,
-                    claims: claims,
-                    expires: expiresAt,
-                    signingCredentials: signingCredentials
-                    );
+                var jwtSecurityToken = new SecurityTokenDescriptor
+                {
+                    Issuer = _authOptions.Issuer,
+                    Expires = expiresAt,
+                    Subject = new ClaimsIdentity(claims),
+                    Audience = _authOptions.Audience,
+                    IssuedAt = DateTime.UtcNow,
+                    NotBefore = DateTime.UtcNow,
+                    SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.RsaSha256)
+                };
+
+
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var securityToken = tokenHandler.CreateToken(jwtSecurityToken);
+                var tokenString = tokenHandler.WriteToken(securityToken);
                 
-                var accessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
                 var refreshToken = Cryptography.CharGenerator.genID(20, Domain.Enums.CharacterSet.ALPHA_NUMERIC_NON_CASE);
                 var tokenHash = ComputeHash(refreshToken);
                 var expiresAtRefresh = DateTime.UtcNow.AddSeconds(_authOptions.RefreshTokenExpiryInSeconds);
@@ -83,7 +89,7 @@ namespace ETS.Infrastructure.Services
 
                 return new TokenResponse
                 {
-                    AccessToken = accessToken,
+                    AccessToken = tokenString,
                     ExpiresIn = expiresAt,
                     RefreshToken = refreshToken
                 };
