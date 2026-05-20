@@ -22,6 +22,7 @@ namespace ETS.Domain.Entities
         {
             var events = new Events
             {
+                Id = Guid.NewGuid(),
                 Title = title,
                 Description = description,
                 Location = location,

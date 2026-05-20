@@ -6,8 +6,8 @@ namespace ETS.Infrastructure.Repositories
 {
     public class EventRepository : Repository<Events, Guid>, IEventRepository
     {
-        public EventRepository(IDbContext writeDbContext, 
-            IDbContext readDbContext) 
+        public EventRepository(IWriteApplicationDbContext writeDbContext, 
+            IReadApplicationDbContext readDbContext) 
             : base(writeDbContext, readDbContext)
         {
         }

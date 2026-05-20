@@ -1,18 +1,31 @@
 ﻿using ETS.Application.Abstraction.Mediation;
+using ETS.Application.Users.Commands.RegisterUser;
 using ETS.Domain.Common;
+using ETS.Domain.Contracts;
+using ETS.Domain.Entities;
+using ETS.Domain.Errors;
 using ETS.Domain.Repositories;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace ETS.Application.Events.Commands.Add
 {
+    public class EventCategoryRequest
+    {
+        public required string Title { get; set; }
+        public required int Qty { get; set; }
+        public required int Price { get; set; }
+    }
+
     public record AddEventCommand(IFormFile Thumbnail, 
         string Title, 
         string Description, 
         string Location, 
         DateTime EventDate,
         string StartTime,
-        string EndTime) : ICommand<Result<EventsDto>>;
+        string EndTime,
+        List<EventCategoryRequest> EventCategories) : ICommand<EventsDto>;
 
 
     public class AddEventCommandValidator : AbstractValidator<AddEventCommand>
@@ -67,19 +80,72 @@ namespace ETS.Application.Events.Commands.Add
 
     }
 
-    public class AddEventCommandHandler : ICommandHandler<AddEventCommand, Result<EventsDto>>
+    public class AddEventCommandHandler : ICommandHandler<AddEventCommand, EventsDto>
     {
         private readonly IEventRepository _eventRepository;
+        private readonly IEventCategoryRepository _eventCategoryRepository;
+        private readonly IDocumentService _documentService;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<AddEventCommandHandler> _logger;
 
-        public AddEventCommandHandler(IEventRepository eventRepository)
+
+        public AddEventCommandHandler(IEventRepository eventRepository,
+            IEventCategoryRepository eventCategoryRepository,
+            IDocumentService documentService,
+            IUnitOfWork unitOfWork,
+            ILogger<AddEventCommandHandler> logger)
         {
             _eventRepository = eventRepository;
+            _eventCategoryRepository = eventCategoryRepository;
+            _documentService = documentService;
+            _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
-        public Task<Result<Result<EventsDto>>> Handle(AddEventCommand request, CancellationToken cancellationToken)
+        public async Task<Result<EventsDto>> Handle(AddEventCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var existingEvent = await _eventRepository.GetSingleAsync(x => x.Title == request.Title, cancellationToken);
+                if (existingEvent != null)
+                {
+                    return Result.Failure<EventsDto>(EventErrors.AlreadyExists);
+                }
+
+                // upload thumbnail and get url
+                 var thumbnailUrl = _documentService.UploadDocument(request.Thumbnail);
+
+                var newEvent = Domain.Entities.Events.Create(request.Title, 
+                    request.Description, 
+                    request.Location, 
+                    thumbnailUrl,
+                    request.EventDate, 
+                    request.StartTime);
+
+                var eventCategories = request.EventCategories.Select(x => EventCategory.Create(newEvent.Id, x.Title, x.Qty, x.Price)).ToList();
+
+                _eventRepository.Add(newEvent); 
+                _eventCategoryRepository.AddRange(eventCategories);
+                
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                return new EventsDto
+                {
+                    BannerUrl = thumbnailUrl,
+                    Description = request.Description,
+                    Id = newEvent.Id,
+                    Location = request.Location,
+                    Title = request.Title,
+                };
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error adding event {Event}", request.Title.SanitizeForLogging());
+                return Result.Failure<EventsDto>(EventErrors.EventCreationFailed);
+            }
         }
+
+
     }
 
 }

@@ -29,6 +29,12 @@ namespace ETS.Infrastructure.Repositories
             _writeDbContext.Add(entity);
         }
 
+        public void AddRange(List<TEntity> entities)
+        {
+            _writeDbContext.AddRange(entities);
+        }
+
+
         public async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
         {
             return await _readDbSet.AsNoTracking().AnyAsync(predicate, cancellationToken).ConfigureAwait(false);
@@ -101,6 +107,10 @@ namespace ETS.Infrastructure.Repositories
             _writeDbContext.Update(entity);
         }
 
+        public void UpdateRange(List<TEntity> entities)
+        {
+            _writeDbContext.UpdateRange(entities);
+        }
 
         private IQueryable<TEntity> BuildBaseQuery(bool includeDeleted = false, params Expression<Func<TEntity, object>>[] includeExpressions)
         {

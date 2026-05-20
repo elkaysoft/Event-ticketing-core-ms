@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CloudinaryDotNet;
 using ETS.Application.Abstraction.Common;
 using ETS.Application.Behaviours;
 using FluentValidation;
@@ -21,6 +22,16 @@ namespace ETS.Application
         {
             services.AddApplicationDependency(configuration, typeof(DependencyInjection).Assembly);
             services.Configure<DefaultAdminUserSetupOptions>(configuration.GetSection("DefaultAdminUserSetup"));
+
+            var cloudinarySettings = configuration.GetSection("Cloudinary").Get<CloudinarySettings>();
+
+            var cloudinary = new Cloudinary(new Account(
+                cloudinarySettings?.CloudName ?? "dpslphoqo",
+                cloudinarySettings?.ApiKey,
+                cloudinarySettings?.ApiSecret
+                ));
+
+
             return services;
         }
 

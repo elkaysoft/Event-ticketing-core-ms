@@ -33,7 +33,9 @@ namespace ETS.Domain.Repositories
             );
 
         void Add(TEntity entity);
+        void AddRange(List<TEntity> entities);
         void Remove(TEntity entity);
         void Update(TEntity entity);
+        void UpdateRange(List<TEntity> entities);
     }
 }
