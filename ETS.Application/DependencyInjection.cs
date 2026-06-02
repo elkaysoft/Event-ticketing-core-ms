@@ -2,10 +2,12 @@
 using CloudinaryDotNet;
 using ETS.Application.Abstraction.Common;
 using ETS.Application.Behaviours;
+using ETS.Domain.AppConfig;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using System.Reflection;
 
 namespace ETS.Application
@@ -22,16 +24,7 @@ namespace ETS.Application
         {
             services.AddApplicationDependency(configuration, typeof(DependencyInjection).Assembly);
             services.Configure<DefaultAdminUserSetupOptions>(configuration.GetSection("DefaultAdminUserSetup"));
-
-            var cloudinarySettings = configuration.GetSection("Cloudinary").Get<CloudinarySettings>();
-
-            var cloudinary = new Cloudinary(new Account(
-                cloudinarySettings?.CloudName ?? "dpslphoqo",
-                cloudinarySettings?.ApiKey,
-                cloudinarySettings?.ApiSecret
-                ));
-
-
+            
             return services;
         }
 

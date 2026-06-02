@@ -1,5 +1,4 @@
 ﻿using ETS.Application.Abstraction.Mediation;
-using ETS.Application.Users.Commands.RegisterUser;
 using ETS.Domain.Common;
 using ETS.Domain.Contracts;
 using ETS.Domain.Entities;
@@ -110,6 +109,12 @@ namespace ETS.Application.Events.Commands.Add
                 if (existingEvent != null)
                 {
                     return Result.Failure<EventsDto>(EventErrors.AlreadyExists);
+                }
+
+                var eventOverlapping = await _eventRepository.IsEventOverlapping(request.Location, request.EventDate, request.StartTime, cancellationToken);
+                if (eventOverlapping)
+                {
+                    return Result.Failure<EventsDto>(EventErrors.OverlappingEventError);
                 }
 
                 // upload thumbnail and get url

@@ -1,4 +1,4 @@
-﻿namespace ETS.Application.Abstraction.Common
+﻿namespace ETS.Domain.AppConfig
 {
     public class CloudinarySettings
     {

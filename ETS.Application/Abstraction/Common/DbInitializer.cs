@@ -1,14 +1,10 @@
 ﻿using ETS.Application.Users.Commands.RegisterUser;
+using ETS.Domain.AppConfig;
 using ETS.Domain.Errors;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ETS.Application.Abstraction.Common
 {

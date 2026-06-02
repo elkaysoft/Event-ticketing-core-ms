@@ -88,7 +88,6 @@ namespace ETS.WebApi.Extensions
                     return controller != null ? [controller] : null; 
                 });
 
-                //o.SchemaFilter<SwaggerDefaultValueFilter>();
 
                 o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -98,6 +97,11 @@ namespace ETS.WebApi.Extensions
                     Description = "Enter your JWT toke. \n\nExample: \"eyJhbciosjdIEDJksk\"",
                     Name = "Authorization",
                     In = ParameterLocation.Header
+                });
+
+                o.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+                {
+                    [new OpenApiSecuritySchemeReference("Bearer", document)] = []
                 });
 
             });

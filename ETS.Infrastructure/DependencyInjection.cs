@@ -1,7 +1,10 @@
-﻿  using ETS.Domain.Contracts;
+﻿using CloudinaryDotNet;
+using ETS.Domain.AppConfig;
+using ETS.Domain.Common;
+using ETS.Domain.Contracts;
 using ETS.Infrastructure.Authentication;
 using ETS.Infrastructure.Persistence.DbContexts;
-using Microsoft.AspNetCore.Authentication;
+using ETS.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -201,58 +205,31 @@ namespace ETS.Infrastructure
         private static IServiceCollection AddAuthenticationSection(this IServiceCollection services,
             IConfiguration configuration)
         {                           
-            services.Configure<ETS.Infrastructure.Authentication.AuthenticationOptions>(configuration.GetSection("Authentication"));
-            services.ConfigureOptions<JwtBearerOptionsSetup>();
+            services.Configure<AuthenticationOptions>(configuration.GetSection("Authentication"));            
             services.AddScoped<IUserContext, UserContext>();
-            services.AddScoped<ITokenService, Services.TokenService>();
+            services.AddScoped<ITokenService, TokenService>();
 
-            var jwtSettings = configuration.GetSection("Authentication").Get<ETS.Infrastructure.Authentication.AuthenticationOptions>();
-            var key = CreateRsaSecurityKey(jwtSettings.IssuerKey);
+            services.Configure<CloudinarySettings>(configuration.GetSection("Cloudinary"));
+            services.AddSingleton(sp =>
+            {
+                var settings = sp.GetRequiredService<IOptions<CloudinarySettings>>().Value;
+                var account = new Account(settings.CloudName, settings.ApiKey, settings.ApiSecret);
+                return new Cloudinary(account);
+            });
+
+            services.AddSingleton<IDocumentService, DocumentService>();
 
             services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer(opt =>
-            {
-                opt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtSettings.Issuer,
-                    ValidAudience = jwtSettings.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.IssuerKey))
-                };
-            });
+            .AddJwtBearer();
+
+            services.ConfigureOptions<JwtBearerOptionsSetup>();
 
             return services;
         }
 
-        private static RsaSecurityKey CreateRsaSecurityKey(string issuerKey)
-        {
-            var rsa = RSA.Create();
-
-            if (issuerKey.TrimStart().StartsWith("-----BEGIN", StringComparison.OrdinalIgnoreCase))
-            {
-                // PEM format - replace literal \n escapes from JSON config with actual newlines
-                var pemKey = issuerKey.Replace("\\n", "\n");
-                rsa.ImportFromPem(pemKey);
-            }
-            else if (issuerKey.TrimStart().StartsWith("<", StringComparison.OrdinalIgnoreCase))
-            {
-                // XML format (legacy keys)
-                rsa.FromXmlString(issuerKey);
-            }
-            else
-            {
-                throw new InvalidOperationException(
-                    "Unsupported RSA key format. The IssuerKey must be in PEM (-----BEGIN PUBLIC KEY-----) or XML (<RSAKeyValue>) format.");
-            }
-
-            return new RsaSecurityKey(rsa);
-        }
     }
 }

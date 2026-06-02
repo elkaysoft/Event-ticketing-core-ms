@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using ETS.Domain.Common;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System.Security.Cryptography;
 using Serilog;
-using ETS.Domain.Common;
+using System.Text.Json;
 
 namespace ETS.Infrastructure.Authentication
 {
@@ -23,7 +24,7 @@ namespace ETS.Infrastructure.Authentication
             options.RequireHttpsMetadata = _authenticationOptions.RequireHttpsMetadata;
             options.SaveToken = true;
 
-            var key = CreateRsaSecurityKey(_authenticationOptions.IssuerKey);
+            var key = Helpers.CreateRsaSecurityKey(_authenticationOptions.IssuerKey);
 
             options.TokenValidationParameters = new TokenValidationParameters
             {
@@ -43,32 +44,8 @@ namespace ETS.Infrastructure.Authentication
         public void Configure(string? name, JwtBearerOptions options)
         {
             Configure(options);
-        }  
-        
-
-        private static RsaSecurityKey CreateRsaSecurityKey(string issuerKey)
-        {
-            var rsa = RSA.Create();
-
-            if(issuerKey.TrimStart().StartsWith("-----BEGIN", StringComparison.OrdinalIgnoreCase))
-            {
-                // PEM format - replace literal \n escapes from JSON config with actual newlines
-                var pemKey = issuerKey.Replace("\\n", "\n");
-                rsa.ImportFromPem(pemKey);
-            }
-            else if(issuerKey.TrimStart().StartsWith("<", StringComparison.OrdinalIgnoreCase))
-            {
-                // XML format (legacy keys)
-                rsa.FromXmlString(issuerKey);
-            }
-            else
-            {
-                throw new InvalidOperationException(
-                    "Unsupported RSA key format. The IssuerKey must be in PEM (-----BEGIN PUBLIC KEY-----) or XML (<RSAKeyValue>) format.");
-            }
-
-            return new RsaSecurityKey(rsa);
-        }
+        } 
+                
 
         /// <summary>
         /// Creates standard JWT bearer events for logging authentication outcomes
@@ -76,17 +53,45 @@ namespace ETS.Infrastructure.Authentication
         /// <returns></returns>
         private static JwtBearerEvents CreateJwtBearerEvents() => new()
         {
-            OnAuthenticationFailed = context =>
+            OnAuthenticationFailed = c =>
             {
-                Log.Warning("Token validation failed: {Error}", context.Exception.Message.SanitizeForLogging());
+                c.NoResult();
+                c.HttpContext.Items["AuthFailure"] = c.Exception;
                 return Task.CompletedTask;
             },
-            OnTokenValidated = context =>
+
+            OnChallenge = context =>
             {
-                var userId = context.Principal?.FindFirst("sub")?.Value;
-                Log.Information("Token validated for user {UserId}", userId?.SanitizeForLogging());
-                return Task.CompletedTask;
-            }            
+                context.HandleResponse(); // suppress ASP.NET default response
+
+                if (context.Response.HasStarted) return Task.CompletedTask;
+
+                var exception = context.HttpContext.Items["AuthFailure"] as Exception;
+
+                var message = exception switch
+                {
+                    SecurityTokenExpiredException => "Token has expired. Please re-authenticate.",
+                    SecurityTokenInvalidSignatureException => "Token signature is invalid.",
+                    SecurityTokenInvalidIssuerException => "Token issuer is invalid.",
+                    SecurityTokenInvalidAudienceException => "Token audience is invalid.",
+                    not null => "Token is invalid.",
+                    null => "Unauthorized. Token is missing."
+                };
+
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                context.Response.ContentType = "application/json";
+                return context.Response.WriteAsync(JsonSerializer.Serialize(new { message }));
+            },
+
+            OnForbidden = context =>
+            {
+                if (context.Response.HasStarted) return Task.CompletedTask;
+
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                context.Response.ContentType = "application/json";
+                var result = JsonSerializer.Serialize(new { message = "You are not allowed to access this resource." });
+                return context.Response.WriteAsync(result);
+            }
         };
 
 
