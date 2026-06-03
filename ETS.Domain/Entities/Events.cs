@@ -17,6 +17,17 @@ namespace ETS.Domain.Entities
         public PublishStatus PublishStatus { get; private set; } = PublishStatus.Draft;
         public virtual IReadOnlyCollection<EventCategory> EventCategories { get; set; }
 
+        /// <summary>
+        /// Create an event
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="description"></param>
+        /// <param name="location"></param>
+        /// <param name="bannerUrl"></param>
+        /// <param name="eventDate"></param>
+        /// <param name="kickoffTime"></param>
+        /// <param name="endTime"></param>
+        /// <returns></returns>
         public static Events Create(string title, 
             string description,
             string location,
