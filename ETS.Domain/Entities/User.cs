@@ -1,8 +1,10 @@
 ﻿using ETS.Domain.Common;
 using ETS.Domain.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ETS.Domain.Entities
 {
+    [Table("Users")]
     public class User: Entity<long>
     {
         public string FullName { get; private set; } = string.Empty;
@@ -35,10 +37,22 @@ namespace ETS.Domain.Entities
         {
             FailedLoginCount++;
         }
+
+        public void UpdateUser(string emailAddress, string fullName, RoleEnum role)
+        {
+            EmailAddress = emailAddress;
+            FullName = fullName;
+            Role = role;
+        }
          
         public void UpdateStatus(UserStatus newStatus)
         {
-            Status = newStatus;
+            Status = newStatus;            
+        }
+
+        public void SoftDelete()
+        {
+            IsDeleted = true;
         }
 
     }

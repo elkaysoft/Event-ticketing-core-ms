@@ -4,14 +4,8 @@ using ETS.Domain.Entities;
 using ETS.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ETS.Infrastructure.Persistence.DbContexts
 {
@@ -106,7 +100,7 @@ namespace ETS.Infrastructure.Persistence.DbContexts
             var auditEntries = new List<AuditLog>();
 
             var now = DateTime.UtcNow;
-            var user = _currentUser.UserEmail ?? "SYSTEM";
+            var user = _currentUser.UserEmail ?? $"UNIDENTIFIED-{DateTime.UtcNow}";
 
             foreach(var entry in ChangeTracker.Entries<EntityBase>().Where(e => e.State is EntityState.Modified or EntityState.Added or EntityState.Deleted))
             {
@@ -117,12 +111,12 @@ namespace ETS.Infrastructure.Persistence.DbContexts
                 {
                     case EntityState.Added:
                         entry.Entity.CreatedAt = now;
-                        entry.Entity.CreatedBy = entry.Entity.CreatedBy ?? user;                        
+                        entry.Entity.CreatedBy = user;                        
                         break;
                         case EntityState.Modified:
                         case EntityState.Deleted:
                         entry.Entity.LastModifiedAt = now;
-                        entry.Entity.LastModifiedBy = entry.Entity.LastModifiedBy ?? user;
+                        entry.Entity.LastModifiedBy = user;
                         break;
                 }
 

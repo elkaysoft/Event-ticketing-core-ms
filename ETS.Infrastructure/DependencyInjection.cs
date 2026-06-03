@@ -1,6 +1,5 @@
 ﻿using CloudinaryDotNet;
 using ETS.Domain.AppConfig;
-using ETS.Domain.Common;
 using ETS.Domain.Contracts;
 using ETS.Infrastructure.Authentication;
 using ETS.Infrastructure.Persistence.DbContexts;
@@ -15,10 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json.Serialization;
 
 namespace ETS.Infrastructure

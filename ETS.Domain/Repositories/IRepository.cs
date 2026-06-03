@@ -11,6 +11,10 @@ namespace ETS.Domain.Repositories
             CancellationToken cancellationToken);
         Task<TEntity?> GetSingleAsync(Expression<Func<TEntity, bool>> predicate,
             CancellationToken cancellationToken);
+
+        Task<TEntity?> GetSingleAsync(Expression<Func<TEntity, bool>> predicate,
+            CancellationToken cancellationToken = default,
+            params Expression<Func<TEntity, object>>[] includeExpressions);
         Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate, 
             CancellationToken cancellationToken = default);
         
@@ -37,5 +41,6 @@ namespace ETS.Domain.Repositories
         void Remove(TEntity entity);
         void Update(TEntity entity);
         void UpdateRange(List<TEntity> entities);
+        void RemoveRange(List<TEntity> entities);
     }
 }

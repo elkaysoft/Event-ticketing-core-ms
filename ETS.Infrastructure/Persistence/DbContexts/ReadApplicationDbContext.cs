@@ -1,8 +1,6 @@
-﻿using ETS.Domain.Contracts;
-using ETS.Domain.Entities;
+﻿using ETS.Domain.Entities;
 using ETS.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
 namespace ETS.Infrastructure.Persistence.DbContexts
 {

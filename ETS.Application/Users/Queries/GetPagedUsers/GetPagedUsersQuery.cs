@@ -10,7 +10,7 @@ using System.Linq.Expressions;
 
 namespace ETS.Application.Users.Queries.GetPagedUsers
 {
-    public record GetPagedUsersQuery(string SearchText, 
+    public record GetPagedUsersQuery(string? SearchText, 
         DateOnly? StartDateOnly,
         DateOnly? EndDateOnly,
         RoleEnum? Role,

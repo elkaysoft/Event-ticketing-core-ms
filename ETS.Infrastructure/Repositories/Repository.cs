@@ -84,6 +84,17 @@ namespace ETS.Infrastructure.Repositories
                 _writeDbSet.FirstOrDefaultAsync(predicate, cancellationToken).ConfigureAwait(false);
         }
 
+        public async Task<TEntity?> GetSingleAsync(Expression<Func<TEntity, bool>> predicate,
+            CancellationToken cancellationToken = default, 
+            params Expression<Func<TEntity, object>>[] includeExpressions)
+        {
+            var query = _writeDbSet.Where(predicate);
+            foreach (var includeExpression in includeExpressions)
+                query = query.Include(includeExpression);
+            return await query.FirstOrDefaultAsync(cancellationToken);
+        }
+
+
         public async Task<TProjection?> GetSingleAsync<TProjection>(Expression<Func<TEntity, bool>> predicate,
             Expression<Func<TEntity, TProjection>> selector,
             CancellationToken cancellationToken = default, 
@@ -100,6 +111,12 @@ namespace ETS.Infrastructure.Repositories
         public void Remove(TEntity entity)
         {
             entity.IsDeleted = true;
+        }
+
+        public void RemoveRange(List<TEntity> entities)
+        {
+            foreach (var entity in entities)
+                entity.IsDeleted = true;
         }
 
         public void Update(TEntity entity)

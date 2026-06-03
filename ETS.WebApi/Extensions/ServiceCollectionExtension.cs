@@ -94,7 +94,7 @@ namespace ETS.WebApi.Extensions
                     Type = SecuritySchemeType.Http,
                     Scheme = "bearer",
                     BearerFormat = "JWT",
-                    Description = "Enter your JWT toke. \n\nExample: \"eyJhbciosjdIEDJksk\"",
+                    Description = "Enter your JWT token. \n\nExample: \"eyJhbciosjdIEDJksk\"",
                     Name = "Authorization",
                     In = ParameterLocation.Header
                 });

@@ -1,7 +1,10 @@
 ﻿using ETS.Domain.Common;
+using ETS.Domain.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ETS.Domain.Entities
 {
+    [Table("Events")]
     public class Events: Entity<Guid>
     {
         public string Title { get; private set; } = string.Empty;
@@ -11,6 +14,7 @@ namespace ETS.Domain.Entities
         public DateTime EventDate { get; private set; }
         public string KickoffTime { get; private set; } = string.Empty;
         public string EndTime { get; private set; } = string.Empty;
+        public PublishStatus PublishStatus { get; private set; } = PublishStatus.Draft;
         public virtual IReadOnlyCollection<EventCategory> EventCategories { get; set; }
 
         public static Events Create(string title, 
@@ -18,7 +22,8 @@ namespace ETS.Domain.Entities
             string location,
             string bannerUrl,
             DateTime eventDate,
-            string kickoffTime)
+            string kickoffTime,
+            string endTime)
         {
             var events = new Events
             {
@@ -28,7 +33,9 @@ namespace ETS.Domain.Entities
                 Location = location,
                 BannerUrl = bannerUrl,
                 EventDate = eventDate,
-                KickoffTime = kickoffTime
+                KickoffTime = kickoffTime,
+                EndTime = endTime,
+                PublishStatus = PublishStatus.Draft
             };
 
             return events;
@@ -39,14 +46,21 @@ namespace ETS.Domain.Entities
             string location,
             string bannerUrl,
             DateTime eventDate,
-            string kickoffTime)
+            string kickoffTime,
+            string endTime,
+            PublishStatus? publishStatus)
         {
             Title = title;
             Description = description;
             Location = location;
             BannerUrl = bannerUrl;
+            if (publishStatus.HasValue)
+            {
+                PublishStatus = publishStatus.Value;
+            }
             EventDate = eventDate;
             KickoffTime = kickoffTime;
+            EndTime = endTime;
         }
     }
 }

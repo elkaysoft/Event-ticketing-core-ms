@@ -9,5 +9,10 @@ namespace ETS.Domain.Repositories
             string kickOffTime,
             CancellationToken cancellationToken);
 
+        Task<bool> IsUpdatedEventOverlapping(Guid eventId, string location,
+            DateTime eventDate,
+            string kickOffTime,
+            CancellationToken cancellationToken);
+
     }
 }

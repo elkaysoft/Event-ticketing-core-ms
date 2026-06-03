@@ -1,6 +1,6 @@
 ﻿namespace ETS.Application.Events.Commands.Add
 {
-    public class EventsDto
+    public class AddEventsDto
     {
         public Guid Id { get; set; }
         public string Title { get; set; }

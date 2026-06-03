@@ -1,7 +1,6 @@
 ﻿using ETS.Domain.Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
 namespace ETS.Infrastructure.Persistence.DbContexts
 {

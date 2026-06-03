@@ -24,7 +24,7 @@ namespace ETS.Application.Events.Commands.Add
         DateTime EventDate,
         string StartTime,
         string EndTime,
-        List<EventCategoryRequest> EventCategories) : ICommand<EventsDto>;
+        List<EventCategoryRequest> EventCategories) : ICommand<AddEventsDto>;
 
 
     public class AddEventCommandValidator : AbstractValidator<AddEventCommand>
@@ -41,8 +41,7 @@ namespace ETS.Application.Events.Commands.Add
 
             RuleFor(x => x.Thumbnail)
                 .Cascade(CascadeMode.Stop)
-               .NotNull().WithMessage("Thumbnail is required")               
-               .WithMessage("Incomplete document")
+               .NotNull().WithMessage("Thumbnail is required")                              
                .Must(DocumentValidation)
                .WithMessage("Invalid document format")
                .Must(DocumentExtentionValidation)
@@ -79,7 +78,7 @@ namespace ETS.Application.Events.Commands.Add
 
     }
 
-    public class AddEventCommandHandler : ICommandHandler<AddEventCommand, EventsDto>
+    public class AddEventCommandHandler : ICommandHandler<AddEventCommand, AddEventsDto>
     {
         private readonly IEventRepository _eventRepository;
         private readonly IEventCategoryRepository _eventCategoryRepository;
@@ -101,20 +100,20 @@ namespace ETS.Application.Events.Commands.Add
             _logger = logger;
         }
 
-        public async Task<Result<EventsDto>> Handle(AddEventCommand request, CancellationToken cancellationToken)
+        public async Task<Result<AddEventsDto>> Handle(AddEventCommand request, CancellationToken cancellationToken)
         {
             try
             {
                 var existingEvent = await _eventRepository.GetSingleAsync(x => x.Title == request.Title, cancellationToken);
                 if (existingEvent != null)
                 {
-                    return Result.Failure<EventsDto>(EventErrors.AlreadyExists);
+                    return Result.Failure<AddEventsDto>(EventErrors.AlreadyExists);
                 }
 
                 var eventOverlapping = await _eventRepository.IsEventOverlapping(request.Location, request.EventDate, request.StartTime, cancellationToken);
                 if (eventOverlapping)
                 {
-                    return Result.Failure<EventsDto>(EventErrors.OverlappingEventError);
+                    return Result.Failure<AddEventsDto>(EventErrors.OverlappingEventError);
                 }
 
                 // upload thumbnail and get url
@@ -125,16 +124,19 @@ namespace ETS.Application.Events.Commands.Add
                     request.Location, 
                     thumbnailUrl,
                     request.EventDate, 
-                    request.StartTime);
+                    request.StartTime,
+                    request.EndTime);
+
+                _eventRepository.Add(newEvent);
 
                 var eventCategories = request.EventCategories.Select(x => EventCategory.Create(newEvent.Id, x.Title, x.Qty, x.Price)).ToList();
-
-                _eventRepository.Add(newEvent); 
-                _eventCategoryRepository.AddRange(eventCategories);
-                
+                if (eventCategories != null && eventCategories.Count > 0)
+                {
+                    _eventCategoryRepository.AddRange(eventCategories);
+                }                   
+                                
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-                return new EventsDto
+                return new AddEventsDto
                 {
                     BannerUrl = thumbnailUrl,
                     Description = request.Description,
@@ -146,7 +148,7 @@ namespace ETS.Application.Events.Commands.Add
             catch(Exception ex)
             {
                 _logger.LogError(ex, "Error adding event {Event}", request.Title.SanitizeForLogging());
-                return Result.Failure<EventsDto>(EventErrors.EventCreationFailed);
+                return Result.Failure<AddEventsDto>(EventErrors.EventCreationFailed);
             }
         }
 

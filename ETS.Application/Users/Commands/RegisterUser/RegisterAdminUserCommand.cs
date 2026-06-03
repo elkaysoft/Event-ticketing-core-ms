@@ -50,8 +50,6 @@ namespace ETS.Application.Users.Commands.RegisterUser
         }
 
 
-
-
         public async Task<Result<UserDto>> Handle(RegisterAdminUserCommand request, CancellationToken cancellationToken)
         {
             try

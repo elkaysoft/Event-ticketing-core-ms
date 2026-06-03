@@ -2,8 +2,10 @@
 {
     public enum PublishStatus
     {
-        Unpublished,
         Published,
-        Suspended
+        Draft,
+        Cancelled,
+        Completed,
+        Unpublished
     }
 }
