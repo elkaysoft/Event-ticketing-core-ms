@@ -80,7 +80,7 @@ namespace ETS.Infrastructure.ExternalServices
         {
             timeout = CheckTimeout(timeout);
 
-            HttpClient httpClient = new HttpClient();
+            HttpClient httpClient = _httpClientFactory.CreateClient();
 
             if (shouldForwardHeaders)
             {
@@ -94,7 +94,7 @@ namespace ETS.Infrastructure.ExternalServices
                 }
             }
 
-            httpClient.Timeout = TimeSpan.FromMicroseconds(timeout);
+            httpClient.Timeout = TimeSpan.FromMilliseconds(timeout);
 
             UriBuilder uriBuilder = new(BaseUriString)
             {
@@ -143,32 +143,39 @@ namespace ETS.Infrastructure.ExternalServices
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             cts.CancelAfter(timeout);
 
-            var resp = await httpClient.SendAsync(httpRequestMessage, HttpCompletionOption.ResponseHeadersRead, cts.Token); 
-            var respStr = await resp.Content.ReadAsStringAsync(cts.Token);
-
-            _logger.LogDebug("Response from {requestUri} was {respStr}", requestUri?.SanitizeForLogging(), 
-                respStr.SanitizeForLogging());
-
-            if(!resp.IsSuccessStatusCode || string.IsNullOrWhiteSpace(respStr))
-            {
-                _logger.LogError("Request failed, {response}, {statusCode}", respStr.SanitizeForLogging(), 
-                    resp.StatusCode.ToString().SanitizeForLogging());
-                return SetHttpResponseMessageOnResponseObject(default(T), resp);
-            }
-
-            T? respObj = null;
             try
             {
-                respObj = responseDeserializer != null 
-                    ? responseDeserializer(respStr, resp) 
-                    : JsonConvert.DeserializeObject<T>(respStr);
+                var resp = await httpClient.SendAsync(httpRequestMessage, HttpCompletionOption.ResponseHeadersRead, cts.Token);
+                var respStr = await resp.Content.ReadAsStringAsync(cts.Token);
+
+                _logger.LogDebug("Response from {requestUri} was {respStr}", requestUri?.SanitizeForLogging(),
+                    respStr.SanitizeForLogging());
+
+                if (!resp.IsSuccessStatusCode || string.IsNullOrWhiteSpace(respStr))
+                {
+                    _logger.LogError("Request failed, {response}, {statusCode}", respStr.SanitizeForLogging(),
+                        resp.StatusCode.ToString().SanitizeForLogging());
+                    return SetHttpResponseMessageOnResponseObject(default(T), resp);
+                }
+
+                T? respObj = null;
+                try
+                {
+                    respObj = responseDeserializer != null
+                        ? responseDeserializer(respStr, resp)
+                        : JsonConvert.DeserializeObject<T>(respStr);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error occured while deserializing the response Message content");
+                }
+                respObj = SetHttpResponseMessageOnResponseObject(respObj, resp);
+                return respObj;
             }
             catch(Exception ex)
             {
-                _logger.LogError(ex, "Error occured while deserializing the response Message content");
+                return null!;
             }
-            respObj = SetHttpResponseMessageOnResponseObject(respObj, resp);
-            return respObj;
         }
 
         protected T SetHttpResponseMessageOnResponseObject<T>(T? responseObject, HttpResponseMessage responseMessage) 

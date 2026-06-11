@@ -2,6 +2,7 @@
 using ETS.Domain.AppConfig;
 using ETS.Domain.Contracts;
 using ETS.Infrastructure.Authentication;
+using ETS.Infrastructure.ExternalServices;
 using ETS.Infrastructure.Persistence.DbContexts;
 using ETS.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -214,6 +215,8 @@ namespace ETS.Infrastructure
             });
 
             services.AddSingleton<IDocumentService, DocumentService>();
+            services.AddHttpClient<IMicroserviceHttpClient, MicroserviceHttpClient>();
+            services.AddSingleton<IPaystackService, PaystackService>();
 
             services.AddAuthentication(opt =>
             {

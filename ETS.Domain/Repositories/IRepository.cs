@@ -16,7 +16,8 @@ namespace ETS.Domain.Repositories
             CancellationToken cancellationToken = default,
             params Expression<Func<TEntity, object>>[] includeExpressions);
         Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate, 
-            CancellationToken cancellationToken = default);
+            CancellationToken cancellationToken = default,
+            params Expression<Func<TEntity, object>>[] includeExpressions);
         
         Task<PaginatedList<TProjection>> GetPaginatedAsync<TProjection>(
             Expression<Func<TEntity, bool>> predicate,

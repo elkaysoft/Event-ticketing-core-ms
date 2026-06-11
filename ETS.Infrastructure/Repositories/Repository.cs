@@ -40,12 +40,14 @@ namespace ETS.Infrastructure.Repositories
             return await _readDbSet.AsNoTracking().AnyAsync(predicate, cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+        public async Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate, 
+            CancellationToken cancellationToken = default, 
+            params Expression<Func<TEntity, object>>[] includeExpressions)
         {
-            return await
-                _writeDbSet.Where(predicate)
-                .ToListAsync(cancellationToken)
-                .ConfigureAwait(false);
+            var query = _writeDbSet.Where(predicate);
+            foreach (var includeExpression in includeExpressions)
+                query = query.Include(includeExpression);
+            return await query.ToListAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<TEntity?> GetByIdAsync(TId id, CancellationToken cancellationToken)

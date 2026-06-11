@@ -24,6 +24,7 @@ namespace ETS.Application
         {
             services.AddApplicationDependency(configuration, typeof(DependencyInjection).Assembly);
             services.Configure<DefaultAdminUserSetupOptions>(configuration.GetSection("DefaultAdminUserSetup"));
+            services.Configure<PaystackConfigOptions>(configuration.GetSection("PaystackServiceConfig"));
             
             return services;
         }

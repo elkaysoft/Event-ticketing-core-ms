@@ -14,5 +14,10 @@ namespace ETS.Infrastructure.Repositories
             : base(writeDbContext, readDbContext)
         {
         }
+
+        public async Task<List<EventCategory>> GetEventCategoriesByIds(List<Guid> ids, CancellationToken cancellationToken)
+        {
+            return await GetAllAsync(ec => ids.Contains(ec.Id), cancellationToken);            
+        }
     }
 }

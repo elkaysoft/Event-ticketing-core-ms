@@ -169,7 +169,28 @@ namespace ETS.Domain.Extensions
             }
         }
 
+        public static string ComputeHmacSha512(string plainText, string key, bool toLowerHex = true)
+        {
+            // Convert strings into byte arrays using UTF-8 encoding
+            byte[] keyBytes = Encoding.UTF8.GetBytes(key);
+            byte[] messageBytes = Encoding.UTF8.GetBytes(plainText);
 
+            // Initialize the HMACSHA512 instance with the secret key
+            using (var hmac = new HMACSHA512(keyBytes))
+            {
+                // Compute the hash value
+                byte[] hashBytes = hmac.ComputeHash(messageBytes);
+
+                // Option A: Return as Hexadecimal format (e.g., a03f...)
+                if (toLowerHex)
+                {
+                    return Convert.ToHexString(hashBytes).ToLowerInvariant();
+                }
+
+                // Option B: Return as Base64 format (e.g., qR3x...)
+                return Convert.ToBase64String(hashBytes);
+            }
+        }
 
 
     }

@@ -14,5 +14,7 @@ namespace ETS.Domain.Repositories
             string kickOffTime,
             CancellationToken cancellationToken);
 
+        Task<List<Events>> GetActiveEvents();
+
     }
 }

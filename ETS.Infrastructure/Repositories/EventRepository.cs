@@ -30,5 +30,13 @@ namespace ETS.Infrastructure.Repositories
                     && x.KickoffTime == kickOffTime, cancellationToken);
         }
 
+
+        public async Task<List<Events>> GetActiveEvents()
+        {
+            var currentEvent = await GetAllAsync(x => x.PublishStatus == Domain.Enums.PublishStatus.Published 
+                        && x.EventDate >= DateTime.UtcNow, includeExpressions: p => p.EventCategories);
+            return currentEvent;
+        }
+
     }
 }

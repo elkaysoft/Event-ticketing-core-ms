@@ -111,11 +111,14 @@ namespace ETS.WebApi.Extensions
 
         public static IApplicationBuilder WebAppBuilderPipelineBuilder(this WebApplication app)
         {
-            if (!app.Environment.IsProduction())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            //if (!app.Environment.IsProduction())
+            //{
+            //    app.UseSwagger();
+            //    app.UseSwaggerUI();
+            //}
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             app.UseSerilogRequestLogging();
             app.UseExceptionHandler();
