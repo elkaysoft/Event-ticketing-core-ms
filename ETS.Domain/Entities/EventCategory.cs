@@ -14,5 +14,13 @@ namespace ETS.Domain.Entities
         {
             return new EventCategory { EventId =  eventId, Title = title, Qty = qty, Price = price };
         }
+
+        public void Update(string title, int qty, decimal price)
+        {
+            Title = title;
+            Qty = qty;  
+            Price = price;
+        }
+
     }
 }

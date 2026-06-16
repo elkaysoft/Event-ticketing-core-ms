@@ -34,7 +34,8 @@ namespace ETS.Domain.Entities
             string bannerUrl,
             DateTime eventDate,
             string kickoffTime,
-            string endTime)
+            string endTime,
+            PublishStatus publishStatus)
         {
             var events = new Events
             {
@@ -46,7 +47,7 @@ namespace ETS.Domain.Entities
                 EventDate = eventDate,
                 KickoffTime = kickoffTime,
                 EndTime = endTime,
-                PublishStatus = PublishStatus.Draft
+                PublishStatus = publishStatus
             };
 
             return events;

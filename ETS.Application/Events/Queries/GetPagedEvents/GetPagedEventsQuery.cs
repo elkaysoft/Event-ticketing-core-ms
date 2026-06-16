@@ -1,13 +1,9 @@
 ﻿using ETS.Application.Abstraction.Common;
 using ETS.Application.Abstraction.Mediation;
 using ETS.Application.Events.Queries.Events;
-using ETS.Application.Users.Queries.Dto;
-using ETS.Application.Users.Queries.GetPagedUsers;
-using ETS.Domain.Common;
-using ETS.Domain.Entities;
+ using ETS.Domain.Common;
 using ETS.Domain.Enums;
 using ETS.Domain.Repositories;
-using ETS.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -80,6 +76,12 @@ namespace ETS.Application.Events.Queries.GetPagedEvents
 
             return events;
         }
+
+
+        //private async Task<int> GetTicketSoldByEvent()
+        //{
+
+        //}
     }
 
 }

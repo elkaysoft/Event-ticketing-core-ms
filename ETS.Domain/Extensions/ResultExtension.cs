@@ -1,24 +1,33 @@
 ﻿using ETS.Domain.Common;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace ETS.Domain.Extensions
 {
     public static class ResultExtension
     {
-        public static TOut Match<T, TOut>(
-            this Result result,
-            Func<TOut> onSuccess, 
-            Func<Result, TOut> onFailure)
+        public static IActionResult ToActionResult<T>(this Result<T> result)
         {
-            return result.IsSuccess ? onSuccess() : onFailure(result);
+            if (result.IsSuccess)
+                return new OkObjectResult(result.Value);
+
+            return new ObjectResult(result.Error)
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest
+            };
         }
 
-        public static async Task<TOut> MatchAsync<TIn, TOut>(
-            this Task<Result<TIn>> resultTask,
-            Func<TIn, TOut> onSuccess,
-            Func<Result<TIn>, TOut> onFailure)
+        // Overload for non-generic Result
+        public static IActionResult ToActionResult(this Result result)
         {
-            var result = await resultTask;
-            return result.IsSuccess ? onSuccess(result.Value) : onFailure(result);
+            if (result.IsSuccess)
+                return new OkResult();
+
+            return new ObjectResult(result.Error)
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest
+            };
         }
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ETS.Application.Authentication.Commands.ChangePassword;
 using ETS.Application.Authentication.Commands.Login;
 using ETS.Domain.Contracts;
+using ETS.Domain.Extensions;
 using ETS.WebApi.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -27,9 +28,7 @@ namespace ETS.WebApi.Endpoints.v1
         {
             var command = new LoginCommand(request.Username, request.Password, request.Platform);
             var result = await _mediator.Send(command);
-            if (result.IsSuccess)
-                return Ok(result);
-            return BadRequest(result);
+            return result.ToActionResult();
         }
 
         [Authorize]
@@ -42,9 +41,9 @@ namespace ETS.WebApi.Endpoints.v1
                 request.CurrentPassword, 
                 request.NewPassword, 
                 request.ConfirmNewPassword);
+
             var result = await _mediator.Send(command);
-            if (result.IsSuccess) return Ok(result);
-            return BadRequest(result);
+            return result.ToActionResult();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ETS.Application.Payment.Commands.Checkout;
 using ETS.Application.Payment.Commands.Complete;
 using ETS.Domain.Contracts;
+using ETS.Domain.Extensions;
 using ETS.WebApi.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -28,18 +29,14 @@ namespace ETS.WebApi.Endpoints.v1
                 ).ToList());
 
             var result = await _mediator.Send(command);
-            if (result.IsSuccess)
-                return Ok(result);
-            return BadRequest(result);
+            return result.ToActionResult();
         }
 
         [HttpPost("paystack/notification")]
         public async Task<IActionResult> HandlePaystackWebhook(CompletePaymentCommand model)
         {
             var result = await _mediator.Send(model);
-            if (result.IsSuccess)
-                return Ok(result);
-            return BadRequest(result);
+            return result.ToActionResult();
         }
 
     }

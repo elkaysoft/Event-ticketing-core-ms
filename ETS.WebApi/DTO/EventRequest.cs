@@ -11,6 +11,7 @@ namespace ETS.WebApi.DTO
         public DateTime EventDate { get; set; }
         public string StartTime { get; set; }
         public string EndTime { get; set; }
+        public required PublishStatus PublishStatus { get; set; }
         public required List<EventCategoryRequest> EventCategories { get; set; }
     }
 
@@ -42,6 +43,13 @@ namespace ETS.WebApi.DTO
         public string EndTime { get; set; }
         public PublishStatus PublishStatus { get; set; }
         public List<EventCategoryRequest> EventCategories { get; set; } = [];
+    }
+
+    public class UpdateEventCategoryRequest
+    {
+        public required string Title { get; set; }
+        public required int Qty { get; set; }
+        public required decimal Price { get; set; }
     }
 
 }

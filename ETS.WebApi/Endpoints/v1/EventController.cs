@@ -1,15 +1,19 @@
 ﻿using ETS.Application.Events.Commands.Add;
 using ETS.Application.Events.Commands.Delete;
 using ETS.Application.Events.Commands.Update;
+using ETS.Application.Events.Commands.UpdateEventCategory;
 using ETS.Application.Events.Queries.Events;
+using ETS.Application.Events.Queries.GetEventSummary;
 using ETS.Application.Events.Queries.GetPagedEvents;
 using ETS.Application.Events.Queries.GetSingleEvent;
 using ETS.Domain.Common;
 using ETS.Domain.Contracts;
+using ETS.Domain.Extensions;
 using ETS.WebApi.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ETS.WebApi.Endpoints.v1
 {
@@ -37,6 +41,7 @@ namespace ETS.WebApi.Endpoints.v1
                 request.EventDate,
                 request.StartTime,
                 request.EndTime,
+                request.PublishStatus,
                 request.EventCategories.Select(x => new Application.Events.Commands.Add.EventCategoryRequest
                 {
                     Price = x.Price,
@@ -45,9 +50,7 @@ namespace ETS.WebApi.Endpoints.v1
                 }).ToList());
 
             var result = await _mediator.Send(command);
-            if (result.IsSuccess)
-                return Ok(result);
-            return BadRequest(result);
+            return result.ToActionResult();
         }
 
         [HttpGet]
@@ -63,9 +66,7 @@ namespace ETS.WebApi.Endpoints.v1
                 filter.IsAscending);
 
             var result = await _mediator.Send(query);
-            if (result.IsSuccess)
-                return Ok(result);
-            return BadRequest(result);
+            return result.ToActionResult();
         }
 
         [HttpGet("{eventId:Guid}")]
@@ -75,9 +76,7 @@ namespace ETS.WebApi.Endpoints.v1
         {
             var query = new GetSingleEventQuery(eventId);
             var result = await _mediator.Send(query);
-            if (result.IsSuccess)
-                return Ok(result);
-            return BadRequest(result);
+            return result.ToActionResult();
         }
 
         [HttpPut("{eventId:Guid}")]
@@ -102,9 +101,7 @@ namespace ETS.WebApi.Endpoints.v1
                 }).ToList());
 
             var result = await _mediator.Send(command);
-            if (result.IsSuccess)
-                return Ok(result);
-            return BadRequest(result);
+            return result.ToActionResult();
         }
 
         [HttpDelete("{eventId:Guid}")]
@@ -115,11 +112,33 @@ namespace ETS.WebApi.Endpoints.v1
             var command = new DeleteEventCommand(eventId);
 
             var result = await _mediator.Send(command);
-            if (result.IsSuccess)
-                return Ok(result);
-            return BadRequest(result);
+            return result.ToActionResult();
         }
 
+        [HttpGet("summary")]
+        [ProducesResponseType(typeof(EventSummaryDto), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetEventSummary()
+        {
+            var query = new GetEventSummaryQuery();
+
+            var result = await _mediator.Send(query);
+            return result.ToActionResult();
+        }
+
+
+        [HttpPut("{categoryId:Guid}/event-category")]
+        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateEventCategory(Guid categoryId, [FromBody] UpdateEventCategoryRequest request)
+        {
+            var command = new UpdateEventCategoryCommand(categoryId,
+                request.Title,
+                request.Price,
+                request.Qty);
+
+            var result = await _mediator.Send(command);
+            return result.ToActionResult();
+        }
 
     }
 }

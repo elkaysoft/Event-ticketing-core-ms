@@ -31,12 +31,17 @@ namespace ETS.Infrastructure.Repositories
         }
 
 
-        public async Task<List<Events>> GetActiveEvents()
+        public async Task<List<Events>> GetActiveEvents(CancellationToken cancellationToken = default)
         {
-            var currentEvent = await GetAllAsync(x => x.PublishStatus == Domain.Enums.PublishStatus.Published 
-                        && x.EventDate >= DateTime.UtcNow, includeExpressions: p => p.EventCategories);
+            var currentEvent = (await GetAllAsync(x => x.PublishStatus == Domain.Enums.PublishStatus.Published 
+                        && x.EventDate >= DateTime.UtcNow, includeExpressions: p => p.EventCategories,
+                        cancellationToken: cancellationToken))
+                        .OrderByDescending(d => d.EventDate)
+                        .Take(2)
+                        .ToList();
             return currentEvent;
         }
+                
 
     }
 }

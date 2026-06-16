@@ -41,9 +41,7 @@ namespace ETS.WebApi.Endpoints.v1
                 request.Role);
 
             var result = await _mediator.Send(command);
-            if (result.IsSuccess)            
-                return Ok(result);
-            return BadRequest(result);            
+            return result.ToActionResult();       
         }
 
 
@@ -60,9 +58,7 @@ namespace ETS.WebApi.Endpoints.v1
                 filter.IsAscending);
 
             var result = await _mediator.Send(query);
-            if (result.IsSuccess)
-                return Ok(result);
-            return BadRequest(result);
+            return result.ToActionResult();
         }
 
         [HttpGet("{userId:long}")]
@@ -72,9 +68,7 @@ namespace ETS.WebApi.Endpoints.v1
         {
             var query = new GetSingleUserQuery(userId);
             var result = await _mediator.Send(query);
-            if (result.IsSuccess)
-                return Ok(result);
-            return BadRequest(result);
+            return result.ToActionResult();
         }
 
 
@@ -89,9 +83,7 @@ namespace ETS.WebApi.Endpoints.v1
                 request.Role);
 
             var result = await _mediator.Send(command);
-            if (result.IsSuccess)
-                return Ok(result);
-            return BadRequest(result);
+            return result.ToActionResult();
         }
 
 
@@ -103,9 +95,7 @@ namespace ETS.WebApi.Endpoints.v1
             var command = new DeleteUserCommand(userId);
 
             var result = await _mediator.Send(command);
-            if (result.IsSuccess)
-                return Ok(result);
-            return BadRequest(result);
+            return result.ToActionResult();
         }
 
 

@@ -2,6 +2,7 @@
 using ETS.Domain.Common;
 using ETS.Domain.Contracts;
 using ETS.Domain.Entities;
+using ETS.Domain.Enums;
 using ETS.Domain.Errors;
 using ETS.Domain.Repositories;
 using FluentValidation;
@@ -24,6 +25,7 @@ namespace ETS.Application.Events.Commands.Add
         DateTime EventDate,
         string StartTime,
         string EndTime,
+        PublishStatus PublishStatus,
         List<EventCategoryRequest> EventCategories) : ICommand<AddEventsDto>;
 
 
@@ -38,6 +40,7 @@ namespace ETS.Application.Events.Commands.Add
             RuleFor(x => x.Location).NotEmpty().WithMessage("Location is required");
             RuleFor(x => x.StartTime).NotEmpty().WithMessage("Start Time is required");
             RuleFor(x => x.EndTime).NotEmpty().WithMessage("End Time is required");
+            RuleFor(x => x.PublishStatus).IsInEnum().WithMessage("Invalid Publish status");
 
             RuleFor(x => x.Thumbnail)
                 .Cascade(CascadeMode.Stop)
@@ -125,7 +128,8 @@ namespace ETS.Application.Events.Commands.Add
                     thumbnailUrl,
                     request.EventDate, 
                     request.StartTime,
-                    request.EndTime);
+                    request.EndTime,
+                    request.PublishStatus);
 
                 _eventRepository.Add(newEvent);
 

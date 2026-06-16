@@ -12,7 +12,6 @@ namespace ETS.Application.Events.Queries.Events
         public DateTime EventDate { get; set; }
         public string StartTime { get; set; }
         public string EndTime { get; set; }
-        public int TotalTicket { get; set; }
         public int TotalSold { get; set; }
         public DateTime DateCreated { get; set; }
         public PublishStatus PublishStatus { get; set; }

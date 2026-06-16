@@ -3,6 +3,7 @@ using Serilog;
 using Serilog.Formatting.Compact;
 using System.Reflection;
 using Microsoft.OpenApi;
+using Serilog.Events;
 
 namespace ETS.WebApi.Extensions
 {
@@ -12,35 +13,23 @@ namespace ETS.WebApi.Extensions
         {
             var serviceName = "ets-core-service";
 
-            builder.Logging.ClearProviders();
-            builder.Services.AddLogging(o =>
-            {
-                o.ClearProviders();
-                o.Configure(x => x.ActivityTrackingOptions = ActivityTrackingOptions.TraceId | ActivityTrackingOptions.SpanId);
-            });
-
-            builder.Logging.Configure(opt =>
-            {
-                opt.ActivityTrackingOptions = ActivityTrackingOptions.SpanId
-                | ActivityTrackingOptions.TraceId
-                | ActivityTrackingOptions.ParentId
-                | ActivityTrackingOptions.Baggage
-                | ActivityTrackingOptions.Tags;
-            });
-
-            builder.Logging.AddJsonConsole();
-
+            builder.Logging.ClearProviders();           
+       
             // configure serilog
-            builder.Host.UseSerilog((_, sp, loggerConfiguration) =>
+            builder.Host.UseSerilog((ctx, sp, loggerConfiguration) =>
             {
-                loggerConfiguration.MinimumLevel.Information();
-                loggerConfiguration.WriteTo.Console();
-
                 loggerConfiguration
-                    .Enrich.FromLogContext()
+                    .ReadFrom.Configuration(ctx.Configuration)
+                    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                    .MinimumLevel.Override("System", LogEventLevel.Warning)
+                    .Enrich.FromLogContext()                    
                     .Enrich.WithProperty("ServiceName", serviceName)
                     .Enrich.WithProperty("LogType", "Log")
-                    .WriteTo.Console(new LogSanitizer(new RenderedCompactJsonFormatter()));
+                    .WriteTo.Console(new LogSanitizer(new RenderedCompactJsonFormatter()))
+                    .WriteTo.File(
+                    "logs/app.log", 
+                    rollingInterval: RollingInterval.Month,
+                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] {TraceId} {Message:1j}{NewLine}{Exception}");
 
             });
         }

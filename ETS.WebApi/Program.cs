@@ -4,12 +4,17 @@ using ETS.Domain.Contracts;
 using ETS.Infrastructure;
 using ETS.Infrastructure.Persistence.DbContexts;
 using ETS.WebApi.Extensions;
+using Serilog;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 var assembly = Assembly.GetExecutingAssembly();
 
 IWebHostEnvironment env = builder.Environment;
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
 builder.ConfigureDefaultSettings();
 
