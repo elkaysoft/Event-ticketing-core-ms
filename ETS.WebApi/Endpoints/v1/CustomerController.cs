@@ -1,5 +1,7 @@
-﻿using ETS.Application.Events.Queries.GetActiveEvent;
+﻿using ETS.Application.Events.Commands.Add;
+using ETS.Application.Events.Queries.GetActiveEvent;
 using ETS.Application.Events.Queries.GetAllActiveEvents;
+using ETS.Domain.Common;
 using ETS.Domain.Contracts;
 using ETS.Domain.Extensions;
 using ETS.WebApi.DTO;
@@ -22,6 +24,8 @@ namespace ETS.WebApi.Endpoints.v1
         }
 
         [HttpGet("top-active-events")]
+        [ProducesResponseType(typeof(List<GetActiveEventDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetActiveEvents()
         {
             var query = new GetTopActiveEventQuery();
@@ -30,6 +34,8 @@ namespace ETS.WebApi.Endpoints.v1
         }
 
         [HttpGet("list-active-events")]
+        [ProducesResponseType(typeof(PaginatedList<GetActiveEventDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAllActiveEvents([FromQuery] RequestsPagination request)
         {
             var query = new GetAllActiveEventsQuery { PageNumber = request.PageNumber, PageSize = request.PageSize};

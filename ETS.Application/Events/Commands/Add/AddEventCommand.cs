@@ -42,6 +42,15 @@ namespace ETS.Application.Events.Commands.Add
             RuleFor(x => x.EndTime).NotEmpty().WithMessage("End Time is required");
             RuleFor(x => x.PublishStatus).IsInEnum().WithMessage("Invalid Publish status");
 
+            RuleFor(x => x.EventCategories)
+                .NotNull().WithMessage("Event category is required")
+                .NotEmpty().WithMessage("Event category must contain at least one item")
+                .Must(items => items.Select(i => i.Title).Distinct().Count() == items.Count)
+                .WithMessage("Event category must not contain duplicate category title");
+
+            RuleForEach(x => x.EventCategories)
+                .SetValidator(new EventCategoryItemsValidator());
+
             RuleFor(x => x.Thumbnail)
                 .Cascade(CascadeMode.Stop)
                .NotNull().WithMessage("Thumbnail is required")                              
@@ -78,8 +87,21 @@ namespace ETS.Application.Events.Commands.Add
 
             return true;
         }
-
     }
+
+    public class EventCategoryItemsValidator : AbstractValidator<EventCategoryRequest>
+    {
+        public EventCategoryItemsValidator()
+        {
+            RuleFor(x => x.Title).NotEmpty().WithMessage("Title is required");
+            RuleFor(x => x.Price)
+                .NotNull().WithMessage("Price is required")
+                .Must(p => p > 0).WithMessage("Price amount must be greater than zero");
+
+            RuleFor(x => x.Qty).GreaterThan(0).WithMessage("Qty must be greater than zero");
+        }
+    }
+
 
     public class AddEventCommandHandler : ICommandHandler<AddEventCommand, AddEventsDto>
     {

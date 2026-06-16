@@ -1,5 +1,7 @@
 ﻿using ETS.Application.Events.Commands.Add;
+using ETS.Application.Events.Commands.AddEventCategory;
 using ETS.Application.Events.Commands.Delete;
+using ETS.Application.Events.Commands.DeleteEventCategory;
 using ETS.Application.Events.Commands.Update;
 using ETS.Application.Events.Commands.UpdateEventCategory;
 using ETS.Application.Events.Queries.Events;
@@ -13,7 +15,6 @@ using ETS.WebApi.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ETS.WebApi.Endpoints.v1
 {
@@ -31,7 +32,7 @@ namespace ETS.WebApi.Endpoints.v1
 
         [HttpPost]
         [ProducesResponseType(typeof(AddEventsDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateEvent(EventRequest request)
         {
             var command = new AddEventCommand(request.Thumbnail,
@@ -71,7 +72,7 @@ namespace ETS.WebApi.Endpoints.v1
 
         [HttpGet("{eventId:Guid}")]
         [ProducesResponseType(typeof(EventItemsDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetEvent(Guid eventId)
         {
             var query = new GetSingleEventQuery(eventId);
@@ -81,7 +82,7 @@ namespace ETS.WebApi.Endpoints.v1
 
         [HttpPut("{eventId:Guid}")]
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateEvent(Guid eventId, [FromForm]UpdateEventRequest request)
         {
             var command = new UpdateEventCommand(request.Thumbnail,
@@ -92,13 +93,7 @@ namespace ETS.WebApi.Endpoints.v1
                 request.EventDate,
                 request.StartTime,
                 request.EndTime,
-                request.PublishStatus,
-                request.EventCategories.Select(x => new Application.Events.Commands.Add.EventCategoryRequest
-                {
-                    Price = x.Price,
-                    Qty = x.Qty,
-                    Title = x.Title
-                }).ToList());
+                request.PublishStatus);
 
             var result = await _mediator.Send(command);
             return result.ToActionResult();
@@ -106,7 +101,7 @@ namespace ETS.WebApi.Endpoints.v1
 
         [HttpDelete("{eventId:Guid}")]
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteEvent(Guid eventId)
         {
             var command = new DeleteEventCommand(eventId);
@@ -117,6 +112,7 @@ namespace ETS.WebApi.Endpoints.v1
 
         [HttpGet("summary")]
         [ProducesResponseType(typeof(EventSummaryDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetEventSummary()
         {
             var query = new GetEventSummaryQuery();
@@ -128,7 +124,7 @@ namespace ETS.WebApi.Endpoints.v1
 
         [HttpPut("{categoryId:Guid}/event-category")]
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateEventCategory(Guid categoryId, [FromBody] UpdateEventCategoryRequest request)
         {
             var command = new UpdateEventCategoryCommand(categoryId,
@@ -139,6 +135,33 @@ namespace ETS.WebApi.Endpoints.v1
             var result = await _mediator.Send(command);
             return result.ToActionResult();
         }
+
+
+        [HttpPost("{eventId:Guid}/event-category")]
+        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateEventCategory(Guid eventId, [FromBody] CreateEventCategoryRequest request)
+        {
+            var command = new AddEventCategoryCommand(eventId,
+                request.Title,
+                request.Qty,
+                request.Price);
+
+            var result = await _mediator.Send(command);
+            return result.ToActionResult();
+        }
+
+        [HttpDelete("{categoryId:Guid}/event-category")]
+        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> DeleteEventCategory(Guid categoryId)
+        {
+            var command = new DeleteEventCategoryCommand(categoryId);
+
+            var result = await _mediator.Send(command);
+            return result.ToActionResult();
+        }
+
 
     }
 }

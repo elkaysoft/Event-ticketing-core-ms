@@ -1,5 +1,6 @@
 ﻿using ETS.Application.Payment.Commands.Checkout;
 using ETS.Application.Payment.Commands.Complete;
+using ETS.Domain.Common;
 using ETS.Domain.Contracts;
 using ETS.Domain.Extensions;
 using ETS.WebApi.DTO;
@@ -20,6 +21,8 @@ namespace ETS.WebApi.Endpoints.v1
         }
 
         [HttpPost("checkout")]
+        [ProducesResponseType(typeof(CheckoutCommandResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Checkout(EventCheckoutRequest request)
         {
             var command = new CheckoutCommand(request.FullName,

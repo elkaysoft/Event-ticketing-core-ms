@@ -37,11 +37,12 @@ namespace ETS.Application.Events.Queries.GetPagedEvents
 
 
         private static Expression<Func<Domain.Entities.Events, bool>> GetQueryExpression(GetPagedEventsQuery request) => u =>
-           (request.StartDate == null || u.EventDate >= request.StartDate.Value) &&
-           (request.EndDate == null || u.EventDate <= request.EndDate.Value.AddDays(1).AddMinutes(-1) &&
-           (string.IsNullOrWhiteSpace(request.SearchText) ||
-               EF.Functions.Like(u.Title, $"%{request.SearchText}%") ||
-               EF.Functions.Like(u.Location, $"%{request.SearchText}%")));
+             (request.StartDate == null || u.EventDate >= request.StartDate.Value) &&
+             (request.EndDate == null || u.EventDate <= request.EndDate.Value.AddDays(1).AddMinutes(-1)) &&
+             (string.IsNullOrWhiteSpace(request.SearchText) ||
+                 EF.Functions.Like(u.Title, $"%{request.SearchText}%") ||
+                 EF.Functions.Like(u.Location, $"%{request.SearchText}%")) &&
+             (request.PublishStatus == null || u.PublishStatus == request.PublishStatus.Value);
 
         private Expression<Func<Domain.Entities.Events, EventItemsDto>> Selector()
         {

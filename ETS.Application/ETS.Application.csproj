@@ -17,9 +17,4 @@
     <ProjectReference Include="..\ETS.Infrastructure\ETS.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Events\Commands\AddCategory\" />
-    <Folder Include="Events\Commands\DeleteCategory\" />
-  </ItemGroup>
-
 </Project>

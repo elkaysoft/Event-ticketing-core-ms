@@ -21,8 +21,7 @@ namespace ETS.Application.Events.Commands.Update
         DateTime EventDate,
         string StartTime,
         string EndTime,
-        PublishStatus PublishStatus,
-        List<EventCategoryRequest> EventCategories) : ICommand<bool>;
+        PublishStatus PublishStatus) : ICommand<bool>;
 
 
     public class UpdateEventCommandValidator : AbstractValidator<UpdateEventCommand>
@@ -126,18 +125,7 @@ namespace ETS.Application.Events.Commands.Update
                     request.StartTime,
                     request.EndTime,
                     request.PublishStatus);
-
-                var existingCategories = await _eventCategoryRepository.GetAllAsync(x => x.EventId == request.EventId, cancellationToken);
-                if(existingCategories != null && existingCategories.Count > 0)
-                {
-                    _eventCategoryRepository.RemoveRange(existingCategories);
-                }
-
-                var eventCategories = request.EventCategories.Select(x => EventCategory.Create(existingEvent.Id, x.Title, x.Qty, x.Price)).ToList();
-                if(eventCategories != null && eventCategories.Count > 0)
-                {
-                    _eventCategoryRepository.AddRange(eventCategories);
-                }
+                               
 
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
                 return Result.Success(true);

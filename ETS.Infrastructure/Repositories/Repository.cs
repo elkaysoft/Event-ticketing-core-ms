@@ -71,6 +71,9 @@ namespace ETS.Infrastructure.Repositories
         {
             var query = BuildBaseQuery(includeDeleted, includeExpressions);
 
+            if (predicate != null)
+                query = query.Where(predicate);
+
             if (orderBy != null)
                 query = isAscending ? query.OrderBy(orderBy) : query.OrderByDescending(orderBy);
 

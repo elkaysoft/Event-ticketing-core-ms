@@ -32,7 +32,7 @@ namespace ETS.WebApi.Endpoints.v1
 
         [HttpPost]
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateUser(AddUserRequest request)
         {
             var command = new RegisterAdminUserCommand(request.FullName,
@@ -47,6 +47,7 @@ namespace ETS.WebApi.Endpoints.v1
 
         [HttpGet]
         [ProducesResponseType(typeof(PaginatedList<GetUserDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetUsers([FromQuery] GetPaginatedUserFilter filter)
         {
             var query = new GetPagedUsersQuery(
@@ -63,7 +64,7 @@ namespace ETS.WebApi.Endpoints.v1
 
         [HttpGet("{userId:long}")]
         [ProducesResponseType(typeof(GetUserDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetById(long userId)
         {
             var query = new GetSingleUserQuery(userId);
@@ -74,7 +75,7 @@ namespace ETS.WebApi.Endpoints.v1
 
         [HttpPut("{userId:long}")]
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateUser(long userId, UpdateUserRequest request)
         {
             var command = new UpdateUserCommand(userId,
@@ -89,7 +90,7 @@ namespace ETS.WebApi.Endpoints.v1
 
         [HttpDelete("{userId:long}")]
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteUser(long userId)
         {
             var command = new DeleteUserCommand(userId);

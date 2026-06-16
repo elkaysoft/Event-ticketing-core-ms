@@ -42,10 +42,17 @@ namespace ETS.WebApi.DTO
         public required string StartTime { get; set; }
         public string EndTime { get; set; }
         public PublishStatus PublishStatus { get; set; }
-        public List<EventCategoryRequest> EventCategories { get; set; } = [];
     }
 
     public class UpdateEventCategoryRequest
+    {
+        public required string Title { get; set; }
+        public required int Qty { get; set; }
+        public required decimal Price { get; set; }
+    }
+
+
+    public class CreateEventCategoryRequest
     {
         public required string Title { get; set; }
         public required int Qty { get; set; }
