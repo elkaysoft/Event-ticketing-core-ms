@@ -16,6 +16,15 @@ namespace ETS.Application.Events.Queries.Events
         public DateTime DateCreated { get; set; }
         public PublishStatus PublishStatus { get; set; }
         public List<EventCategoryItemsDto> EventCategories { get; set; } = [];
+        public EventTicketStatistics Summary { get; set; }
+    }
+
+    public class EventTicketStatistics
+    {
+        public int TotalTickets { get; set; }
+        public int TotalSold { get; set; }
+        public int TicketsAvailable { get; set; }
+        public decimal AmountSold { get; set; }
     }
 
     public class EventCategoryItemsDto

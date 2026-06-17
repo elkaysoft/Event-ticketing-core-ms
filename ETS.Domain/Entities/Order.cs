@@ -19,6 +19,7 @@ namespace ETS.Domain.Entities
         public decimal SubTotal { get; set; }
         public decimal TaxAmount { get; set; }
         public decimal TotalAmount { get; set; }
+        public int TotalTickets { get; set; }
 
         public virtual ICollection<OrderItem> OrderItems { get; set; }
 
@@ -29,7 +30,8 @@ namespace ETS.Domain.Entities
             decimal taxAmount,
             decimal subTotal,
             decimal totalAmount,
-            string paystackAccessCode)
+            string paystackAccessCode,
+            int totalTickets)
         {
             return new Order
             {
@@ -42,7 +44,8 @@ namespace ETS.Domain.Entities
                 TaxAmount = taxAmount,
                 SubTotal = subTotal,
                 TotalAmount = totalAmount,
-                PaystackAccessCode = paystackAccessCode
+                PaystackAccessCode = paystackAccessCode,
+                TotalTickets = totalTickets
             };
         }
 

@@ -1,9 +1,6 @@
 ﻿using ETS.Domain.Contracts;
 using ETS.Domain.Entities;
 using ETS.Domain.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ETS.Infrastructure.Repositories
 {

@@ -13,6 +13,7 @@ namespace ETS.Infrastructure.Persistence.DbContexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.RegisterAllEntities(typeof(AuditLog).Assembly);
+            modelBuilder.ApplySoftDeleteFilters();
 
             base.OnModelCreating(modelBuilder);
         }

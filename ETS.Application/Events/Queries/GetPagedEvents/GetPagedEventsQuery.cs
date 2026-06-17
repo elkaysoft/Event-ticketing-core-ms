@@ -56,7 +56,8 @@ namespace ETS.Application.Events.Queries.GetPagedEvents
                 BannerUrl = v.BannerUrl,    
                 Title = v.Title,
                 StartTime = v.KickoffTime,
-                Location = v.Location
+                Location = v.Location,
+                PublishStatus = v.PublishStatus
             };
         }
 

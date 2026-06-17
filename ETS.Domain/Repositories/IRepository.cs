@@ -43,5 +43,8 @@ namespace ETS.Domain.Repositories
         void Update(TEntity entity);
         void UpdateRange(List<TEntity> entities);
         void RemoveRange(List<TEntity> entities);
+
+        Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate,
+            CancellationToken cancellationToken = default);
     }
 }

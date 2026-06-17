@@ -50,6 +50,13 @@ namespace ETS.Infrastructure.Repositories
             return await query.ToListAsync(cancellationToken).ConfigureAwait(false);
         }
 
+        public async Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate,
+            CancellationToken cancellationToken = default)
+        {
+            var query = await _writeDbSet.Where(predicate).CountAsync(cancellationToken);
+            return query;
+        }
+
         public async Task<TEntity?> GetByIdAsync(TId id, CancellationToken cancellationToken)
         {
             return await

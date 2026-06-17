@@ -70,25 +70,7 @@ namespace ETS.Infrastructure.Persistence.DbContexts
 
             modelBuilder.ApplyConfigurationsFromAssembly(ConfigurationAssembly);
 
-            foreach(var entityType in modelBuilder.Model.GetEntityTypes().
-                Where(e => typeof(EntityBase).IsAssignableFrom(e.ClrType)))
-            {
-                var parameter = Expression.Parameter(entityType.ClrType, "e");
-                var property = Expression.PropertyOrField(parameter, nameof(EntityBase.IsDeleted));
-                var falseConstant = Expression.Constant(false);
-                var comparison = Expression.Equal(property, falseConstant);
-                var lambda = Expression.Lambda(comparison, parameter);
-
-                modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
-            }
-
-            foreach (var entityType in modelBuilder.Model.GetEntityTypes().
-                Where(e => typeof(EntityBase).IsAssignableFrom(e.ClrType)))
-            {
-                modelBuilder.Entity(entityType.ClrType)
-                    .Property("IsDeleted")
-                    .HasDefaultValue(false);
-            }
+            modelBuilder.ApplySoftDeleteFilters();
 
             base.OnModelCreating(modelBuilder);
         }

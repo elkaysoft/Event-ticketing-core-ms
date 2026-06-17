@@ -95,6 +95,7 @@ namespace ETS.Application.Payment.Commands.Checkout
                 return Result.Failure<CheckoutCommandResponse>(TransactionErrors.UnableToProcessPayment);
             }
 
+            int totalTickets = orderDetails.Sum(x => x.Unit);
             var order = Order.Create(request.FullName,
                 request.EmailAddress,
                 request.PhoneNumber,
@@ -102,7 +103,8 @@ namespace ETS.Application.Payment.Commands.Checkout
                 taxAmount,
                 subTotal,
                 totalAmount,
-                intializePaymentResult.Value.access_code);
+                intializePaymentResult.Value.access_code,
+                totalTickets);
             _orderRepository.Add(order);
 
             foreach (var item in orderDetails)

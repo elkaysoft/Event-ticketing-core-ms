@@ -10,5 +10,10 @@ namespace ETS.Infrastructure.Repositories
             IReadApplicationDbContext readDbContext) : base(writeDbContext, readDbContext)
         {
         }
+
+        public async Task<List<OrderItem>> GetOrderItemsByIds(List<Guid> ids, CancellationToken cancellationToken)
+        {
+            return await GetAllAsync(ec => ids.Contains(ec.Id), cancellationToken);
+        }
     }
 }

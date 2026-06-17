@@ -1,5 +1,4 @@
-﻿using ETS.Application.Events.Commands.Add;
-using ETS.Application.Events.Queries.GetActiveEvent;
+﻿using ETS.Application.Events.Queries.GetActiveEvent;
 using ETS.Application.Events.Queries.GetAllActiveEvents;
 using ETS.Domain.Common;
 using ETS.Domain.Contracts;

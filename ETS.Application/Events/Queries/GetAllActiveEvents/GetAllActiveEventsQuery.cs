@@ -37,8 +37,6 @@ namespace ETS.Application.Events.Queries.GetAllActiveEvents
            u.PublishStatus == Domain.Enums.PublishStatus.Published
                         && u.EventDate >= DateTime.UtcNow;
 
-
-
         public async Task<Result<PaginatedList<GetActiveEventDto>>> Handle(GetAllActiveEventsQuery request, CancellationToken cancellationToken)
         {
             var filter = GetQueryExpression(request);

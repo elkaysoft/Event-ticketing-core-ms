@@ -11,10 +11,16 @@ namespace ETS.Application.Events.Queries.GetSingleEvent
     public class GetSingleEventQueryHandler : IQueryHandler<GetSingleEventQuery, EventItemsDto>
     {
         private readonly IEventRepository _eventRepository;
+        private readonly IEventCategoryRepository _eventCategoryRepository;
+        private readonly IOrderItemRepository _orderItemRepository;
 
-        public GetSingleEventQueryHandler(IEventRepository eventRepository)
+        public GetSingleEventQueryHandler(IEventRepository eventRepository,
+            IEventCategoryRepository eventCategoryRepository,
+            IOrderItemRepository orderItemRepository)
         {
             _eventRepository = eventRepository;
+            _eventCategoryRepository = eventCategoryRepository;
+            _orderItemRepository = orderItemRepository;
         }
 
         public async Task<Result<EventItemsDto>> Handle(GetSingleEventQuery request, CancellationToken cancellationToken)
@@ -24,6 +30,15 @@ namespace ETS.Application.Events.Queries.GetSingleEvent
             {
                 return Result.Failure<EventItemsDto>(EventErrors.NotFound);
             }
+
+            var eventCategories = await _eventCategoryRepository.GetAllAsync(x => x.EventId == request.EventId, cancellationToken);
+            var ticketIds = eventCategories.Select(x => x.Id).ToList();
+            var tickets = await _orderItemRepository.GetOrderItemsByIds(ticketIds, cancellationToken);
+
+            int totalTickets = eventCategories.Sum(x => x.Qty);
+            int totalSold = tickets.Sum(x => x.Unit);
+            int ticketsAvailable = totalTickets - totalSold;
+            decimal amountSold = tickets.Sum(x => (x.UnitPrice * x.Unit));            
 
             var eventDto = new EventItemsDto
             {
@@ -42,7 +57,14 @@ namespace ETS.Application.Events.Queries.GetSingleEvent
                     Title = x.Title,
                     Price = x.Price,
                     Qty = x.Qty
-                }).ToList()
+                }).ToList(),
+                Summary = new EventTicketStatistics
+                {
+                    TotalTickets = totalTickets,
+                    TotalSold = totalSold,
+                    AmountSold = amountSold,
+                    TicketsAvailable = ticketsAvailable
+                }
             };
 
             return eventDto;
