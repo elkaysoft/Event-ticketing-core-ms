@@ -4,6 +4,7 @@ using ETS.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ETS.Infrastructure.Migrations
 {
     [DbContext(typeof(WriteApplicationDbContext))]
-    partial class WriteApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260617065407_UpdateOrderEntityV4")]
+    partial class UpdateOrderEntityV4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -219,9 +222,6 @@ namespace ETS.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("EventName")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -284,8 +284,6 @@ namespace ETS.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EventId");
-
                     b.ToTable("Order");
                 });
 
@@ -321,10 +319,6 @@ namespace ETS.Infrastructure.Migrations
 
                     b.Property<Guid>("OutBoxId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Unit")
                         .HasColumnType("int");
@@ -587,17 +581,6 @@ namespace ETS.Infrastructure.Migrations
                         .WithMany("EventCategories")
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Event");
-                });
-
-            modelBuilder.Entity("ETS.Domain.Entities.Order", b =>
-                {
-                    b.HasOne("ETS.Domain.Entities.Events", "Event")
-                        .WithMany()
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Event");

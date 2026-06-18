@@ -9,6 +9,7 @@ namespace ETS.Infrastructure.Persistence.Configuration
         public void Configure(EntityTypeBuilder<Order> builder)
         {
             builder.HasKey(x => x.Id);
+            builder.Property(x => x.EventName).IsRequired().HasMaxLength(500);
             builder.Property(x => x.FullName).IsRequired().HasMaxLength(100);
             builder.Property(x => x.EmailAddress).IsRequired().HasMaxLength(100);
             builder.Property(x => x.PhoneNumber).IsRequired().HasMaxLength(20);

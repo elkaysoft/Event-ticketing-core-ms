@@ -79,15 +79,7 @@ namespace ETS.Application.Authentication.Commands.Login
 
                 return new LoginResponse
                 {
-                    Token = jwtToken.Value,
-                    User = new Domain.Models.TokenUser
-                    {
-                        UserId = user.Id,
-                        Email = user.EmailAddress,
-                        PhoneNumber = user.PhoneNumber,
-                        FullName = user.FullName,
-                        Role = user.Role.ToString()
-                    }
+                    Token = jwtToken.Value
                 };
             }
             catch(Exception ex)

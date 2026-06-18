@@ -10,6 +10,6 @@ namespace ETS.Application.Tickets.Queries.GetPagedTickets
         public string FullName { get; set; }
         public string EmailAddress { get; set; }
         public int Qty { get; set; }
-        public OrderStatus Status { get; set; }
+        public string Status { get; set; }
     }
 }

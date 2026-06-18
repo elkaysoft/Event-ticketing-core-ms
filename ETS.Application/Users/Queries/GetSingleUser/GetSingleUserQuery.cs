@@ -29,7 +29,8 @@ namespace ETS.Application.Users.Queries.GetSingleUser
                 Email = userResult.EmailAddress,
                 PhoneNumber = userResult.PhoneNumber,
                 Role = userResult.Role.ToString(),
-                DateCreated = userResult.CreatedAt
+                DateCreated = userResult.CreatedAt,
+                Status = userResult.Status
             };
             return Result.Success(userDto);
         }

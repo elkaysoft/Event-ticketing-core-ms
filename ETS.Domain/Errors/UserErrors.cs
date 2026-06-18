@@ -8,5 +8,6 @@ namespace ETS.Domain.Errors
         public static readonly Error AlreadyExists = new("User.AlreadyExist", "User with this email already exists");
         public static readonly Error RegistrationFailed = new("User.RegistrationFailed", "An error occurred during admin user registration");
         public static readonly Error UpdateFailed = new("User.UpdateFailed", "An error occurred while updating the user");
+        public static readonly Error SomethingWentWrong = new("Event.Exception", "Something went wrong, pls try again later");
     }
 }

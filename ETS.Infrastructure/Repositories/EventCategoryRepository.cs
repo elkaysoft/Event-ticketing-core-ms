@@ -14,7 +14,7 @@ namespace ETS.Infrastructure.Repositories
 
         public async Task<List<EventCategory>> GetEventCategoriesByIds(List<Guid> ids, CancellationToken cancellationToken)
         {
-            return await GetAllAsync(ec => ids.Contains(ec.Id), cancellationToken);            
+            return await GetAllAsync(ec => ids.Contains(ec.Id), cancellationToken, includeExpressions: p => p.Event);            
         }
     }
 }

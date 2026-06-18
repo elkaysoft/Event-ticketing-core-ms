@@ -11,7 +11,7 @@
         {
             PageIndex = pageIndex;
             Items = items;
-            TotalPages = (int)Math.Ceiling(count / (double)pageSize);
+            TotalPages = (int)Math.Ceiling((double)count / (double)pageSize);
             TotalCount = count;
         }
 

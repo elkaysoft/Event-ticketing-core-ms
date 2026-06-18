@@ -5,7 +5,8 @@ namespace ETS.Domain.Entities
 {
     public class Order: Entity<Guid>
     {
-
+        public Guid EventId { get; set; }
+        public string EventName { get; set; }
         public string FullName { get; set; }
         public string EmailAddress { get; set; }
         public string PhoneNumber { get; set; }
@@ -22,8 +23,11 @@ namespace ETS.Domain.Entities
         public int TotalTickets { get; set; }
 
         public virtual ICollection<OrderItem> OrderItems { get; set; }
+        public virtual Events Event { get; set; }
 
-        public static Order Create(string fullName,
+        public static Order Create(string eventName,
+            Guid eventId,
+            string fullName,
             string emailAddress, 
             string phoneNumber,
             string orderNumber,
@@ -45,7 +49,9 @@ namespace ETS.Domain.Entities
                 SubTotal = subTotal,
                 TotalAmount = totalAmount,
                 PaystackAccessCode = paystackAccessCode,
-                TotalTickets = totalTickets
+                TotalTickets = totalTickets,
+                EventId = eventId,
+                EventName = eventName
             };
         }
 

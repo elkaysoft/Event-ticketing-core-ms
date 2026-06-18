@@ -66,7 +66,9 @@ namespace ETS.Application.Payment.Commands.Checkout
 
             string orderNumber = $"ORD-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString("N")[..8].ToUpper()}";
             decimal subTotal = 0;
-            
+            var eventName = eventCategories.Select(x => x.Event.Title).FirstOrDefault();
+            var eventId = eventCategories.Select(x => x.Event.Id).FirstOrDefault();
+
             var orderDetails = new List<OrderItem>();
             foreach (var item in request.TicketDetail)
             {
@@ -75,7 +77,7 @@ namespace ETS.Application.Payment.Commands.Checkout
 
                 subTotal += eventCategory.Price * item.Unit;
 
-                var orderDetail = OrderItem.Create(Guid.NewGuid(), eventCategory.Id, item.Unit, eventCategory.Price);
+                var orderDetail = OrderItem.Create(eventCategory.Title, Guid.NewGuid(), eventCategory.Id, item.Unit, eventCategory.Price);
                 orderDetails.Add(orderDetail);
             }
             decimal taxAmount = 5.5m;
@@ -96,7 +98,10 @@ namespace ETS.Application.Payment.Commands.Checkout
             }
 
             int totalTickets = orderDetails.Sum(x => x.Unit);
-            var order = Order.Create(request.FullName,
+            var order = Order.Create(
+                eventName!,
+                eventId,
+                request.FullName,
                 request.EmailAddress,
                 request.PhoneNumber,
                 orderNumber,
@@ -109,7 +114,7 @@ namespace ETS.Application.Payment.Commands.Checkout
 
             foreach (var item in orderDetails)
             {
-                var orderItem = OrderItem.Create(order.Id, item.EventCategoryId, item.Unit, item.UnitPrice);
+                var orderItem = OrderItem.Create(item.Title, order.Id, item.EventCategoryId, item.Unit, item.UnitPrice);
                 _orderItemRepository.Add(orderItem);
             }
 

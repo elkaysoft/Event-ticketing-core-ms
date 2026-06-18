@@ -1,4 +1,6 @@
-﻿namespace ETS.Application.Users.Queries.Dto
+﻿using ETS.Domain.Enums;
+
+namespace ETS.Application.Users.Queries.Dto
 {
     public class GetUserDto
     {
@@ -8,5 +10,6 @@
         public string FullName { get; set; }
         public string Role { get; set; }
         public DateTime DateCreated { get; set; }
+        public UserStatus Status { get; set; }
     }
 }

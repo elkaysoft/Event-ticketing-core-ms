@@ -53,7 +53,8 @@ namespace ETS.Application.Users.Queries.GetPagedUsers
                 Email = v.EmailAddress,
                 FullName = v.FullName,
                 PhoneNumber = v.PhoneNumber,
-                Role = v.Role.ToString()
+                Role = v.Role.ToString(),
+                Status = v.Status
             };
         }
 

@@ -6,15 +6,17 @@ namespace ETS.Domain.Entities
     {
         public Guid OrderId { get; set; }
         public Guid EventCategoryId { get; set; }
+        public string Title { get; set; }
         public int Unit { get; set; }
         public decimal UnitPrice { get; set; }
         public virtual EventCategory EventCategory { get; set; }
         public virtual Order Order { get; set; }
 
-        public static OrderItem Create(Guid orderId, Guid eventCategoryId, int unit, decimal unitPrice)
+        public static OrderItem Create(string titel, Guid orderId, Guid eventCategoryId, int unit, decimal unitPrice)
         {
             return new OrderItem
             {
+                Title = titel,
                 OrderId = orderId,
                 EventCategoryId = eventCategoryId,
                 Unit = unit,

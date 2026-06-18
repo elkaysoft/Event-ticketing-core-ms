@@ -56,7 +56,11 @@ namespace ETS.WebApi.Endpoints.v1
                 filter.EndDate.HasValue ? DateOnly.FromDateTime(filter.EndDate.Value) : (DateOnly?)null,
                 filter.Role,
                 filter.SortField,
-                filter.IsAscending);
+                filter.IsAscending)
+            { 
+                PageNumber = filter.PageNumber,
+                PageSize = filter.PageSize
+            };
 
             var result = await _mediator.Send(query);
             return result.ToActionResult();

@@ -64,7 +64,11 @@ namespace ETS.WebApi.Endpoints.v1
                 filter.EndDate,
                 filter.PublishStatus,
                 filter.SortField,
-                filter.IsAscending);
+                filter.IsAscending)
+            { 
+                PageNumber = filter.PageNumber,
+                PageSize = filter.PageSize
+            };
 
             var result = await _mediator.Send(query);
             return result.ToActionResult();
