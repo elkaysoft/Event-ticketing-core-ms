@@ -32,8 +32,8 @@ namespace ETS.Infrastructure.ExternalServices
         {            
             try
             {
-                model.CallbackUrl = _paystackConfigOption.CallbackUrl;
-                var metadata = new { cancel_action = _paystackConfigOption.CancellationUrl };
+                model.CallbackUrl = _paystackConfigOption.SuccessfulPaymentUrl;
+                var metadata = new { cancel_action = _paystackConfigOption.FailedPaymentUrl };
                 model.MetaData = JsonSerializer.Serialize(metadata);
 
                 var headers = BuildHeaders();

@@ -99,18 +99,24 @@ namespace ETS.Application.Payment.Commands.Complete
         private readonly PaystackConfigOptions _config;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IEventRepository _eventRepository;
+        private readonly IEventCategoryRepository _eventCategoryRepository;
 
         public CompletePaymentCommandHandler(ILogger<CompletePaymentCommandHandler> logger,
             IOrderRepository orderRepository,
             IOptions<PaystackConfigOptions> config,
             IHttpContextAccessor contextAccessor,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IEventCategoryRepository eventCategoryRepository,
+            IEventRepository eventRepository)
         {
             _logger = logger;
             _orderRepository = orderRepository;
             _config = config.Value;
             _contextAccessor = contextAccessor;
             _unitOfWork = unitOfWork;
+            _eventCategoryRepository = eventCategoryRepository;
+            _eventRepository = eventRepository;
         }
 
         public async Task<Result<bool>> Handle(CompletePaymentCommand request, CancellationToken cancellationToken)
@@ -150,10 +156,22 @@ namespace ETS.Application.Payment.Commands.Complete
             }
 
             var orderStatus = request.data.status.ToLower() == "success" ? OrderStatus.Completed : OrderStatus.Cancelled;
-            orderResult.UpdateStatus(orderStatus);
+            
+            // reverse/return the unit sold, since the payment failed or cancelled
+            if(orderStatus == OrderStatus.Cancelled)
+            {
+                var eventCategories = await _eventCategoryRepository.GetAllAsync(x => x.EventId == orderResult.EventId, 
+                    cancellationToken);
+                foreach(var category in eventCategories)
+                {
+                    category.RemoveFromUnitSold(category.Qty);
+                }
+            }            
+            
+            orderResult.UpdateStatus(orderStatus);                        
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            _logger.LogWarning($"Payment successfully processed for {request.data.reference}");
+            _logger.LogWarning($"Payment successfully processed for {request.data.reference} with Payment status: [{orderResult.ToString()}]");
 
             return true;
         }

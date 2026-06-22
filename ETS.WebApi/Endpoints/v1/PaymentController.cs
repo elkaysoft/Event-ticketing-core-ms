@@ -6,6 +6,7 @@ using ETS.Domain.Extensions;
 using ETS.WebApi.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace ETS.WebApi.Endpoints.v1
 {
@@ -13,11 +14,13 @@ namespace ETS.WebApi.Endpoints.v1
     [ApiController]
     public class PaymentController : AuthControllerBase<PaymentController>
     {
+        private readonly ILogger<PaymentController> _logger;
         public PaymentController(ILogger<PaymentController> logger, 
             IConfiguration config, 
             IUserContext userService,
             ISender mediator) : base(logger, config, userService, mediator)
         {
+            _logger = logger;
         }
 
 
@@ -30,7 +33,7 @@ namespace ETS.WebApi.Endpoints.v1
                 request.PhoneNumber,
                 request.EmailAddress,
                 request.TicketDetails.Select(x => new CheckoutListDto(x.TicketId, x.Unit)
-                ).ToList());
+                ).ToList());            
 
             var result = await _mediator.Send(command);
             return result.ToActionResult();
@@ -40,6 +43,8 @@ namespace ETS.WebApi.Endpoints.v1
         [HttpPost("paystack/notification")]
         public async Task<IActionResult> HandlePaystackWebhook(CompletePaymentCommand model)
         {
+            _logger.LogInformation("Webhook Request at {0} - {1}", DateTime.UtcNow, JsonConvert.SerializeObject(model));
+
             var result = await _mediator.Send(model);
             return result.ToActionResult();
         }

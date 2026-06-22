@@ -23,9 +23,21 @@ namespace ETS.Domain.Entities
             Price = price;
         }
 
-        public void UpdateUnitSold(int qty)
+        public void UpdateQuantity(int unitSold)
+        {
+            
+
+        }
+
+
+        public void AddToUnitSold(int qty)
         {
             UnitSold += qty;
+        }
+
+        public void RemoveFromUnitSold(int qty)
+        {
+            UnitSold -= qty;
         }
 
     }

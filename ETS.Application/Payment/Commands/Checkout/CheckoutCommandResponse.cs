@@ -2,7 +2,7 @@
 {
     public class CheckoutCommandResponse
     {
-        public string access_code { get; set; }
+        public string payment_url { get; set; }
         public string reference { get; set; }
     }
 }

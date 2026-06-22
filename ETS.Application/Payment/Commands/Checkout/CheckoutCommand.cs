@@ -77,6 +77,7 @@ namespace ETS.Application.Payment.Commands.Checkout
                 if (eventCategory is null) continue;
 
                 subTotal += eventCategory.Price * item.Unit;
+                eventCategory.AddToUnitSold(item.Unit);
 
                 var orderDetail = OrderItem.Create(eventCategory.Title, Guid.NewGuid(), eventCategory.Id, item.Unit, eventCategory.Price);
                 orderDetails.Add(orderDetail);
@@ -123,7 +124,7 @@ namespace ETS.Application.Payment.Commands.Checkout
 
             return new CheckoutCommandResponse 
             { 
-                access_code = intializePaymentResult.Value.access_code,
+                payment_url = intializePaymentResult.Value.authorization_url,
                 reference = intializePaymentResult.Value.reference 
             };
         }
