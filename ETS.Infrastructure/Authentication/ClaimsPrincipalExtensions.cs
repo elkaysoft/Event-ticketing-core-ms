@@ -5,12 +5,10 @@ namespace ETS.Infrastructure.Authentication
 {
     internal static class ClaimsPrincipalExtensions
     {
-        public static Guid? GetUserId(this ClaimsPrincipal? principal)
+        public static string? GetUserId(this ClaimsPrincipal? principal)
         {
             var userId = principal?.FindFirstValue("user_id");
-
-            var parseUserId = Guid.TryParse(userId, out var uId);
-            return parseUserId ? uId : null;
+            return userId;
         }
 
         public static string? GetUserEmail(this ClaimsPrincipal? principal)

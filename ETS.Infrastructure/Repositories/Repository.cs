@@ -65,6 +65,7 @@ namespace ETS.Infrastructure.Repositories
                 .ConfigureAwait(false);
         }
 
+
         public async Task<PaginatedList<TProjection>> GetPaginatedAsync<TProjection>(Expression<Func<TEntity, bool>>
             predicate, 
             Expression<Func<TEntity, TProjection>> selector, 

@@ -20,6 +20,7 @@ namespace ETS.WebApi.Endpoints.v1
         {
         }
 
+
         [HttpPost("checkout")]
         [ProducesResponseType(typeof(CheckoutCommandResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
@@ -34,6 +35,7 @@ namespace ETS.WebApi.Endpoints.v1
             var result = await _mediator.Send(command);
             return result.ToActionResult();
         }
+
 
         [HttpPost("paystack/notification")]
         public async Task<IActionResult> HandlePaystackWebhook(CompletePaymentCommand model)

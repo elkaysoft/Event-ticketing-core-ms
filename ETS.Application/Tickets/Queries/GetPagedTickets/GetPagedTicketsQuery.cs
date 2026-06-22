@@ -35,7 +35,8 @@ namespace ETS.Application.Tickets.Queries.GetPagedTickets
             return v => new CustomerTicketsDto
             {
                 Id = v.Id,
-                Status = v.OrderStatus.ToString(),
+                PaymentStatus = v.OrderStatus,
+                RedemptionStatus = v.RedemptionStatus,
                 EmailAddress = v.EmailAddress,
                 FullName = v.FullName,
                 Qty = v.TotalTickets,

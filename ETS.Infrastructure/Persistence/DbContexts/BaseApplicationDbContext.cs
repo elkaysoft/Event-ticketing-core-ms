@@ -4,7 +4,6 @@ using ETS.Domain.Entities;
 using ETS.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 using System.Reflection;
 
 namespace ETS.Infrastructure.Persistence.DbContexts

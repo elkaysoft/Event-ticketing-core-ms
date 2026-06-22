@@ -7,6 +7,7 @@ namespace ETS.Domain.Entities
         public Guid EventId { get; private set; }
         public string Title { get; private set; }
         public int Qty { get; private set; }
+        public int UnitSold { get; private set; } = 0;
         public decimal Price { get; private set; }
         public virtual Events Event { get; set; }
 
@@ -20,6 +21,11 @@ namespace ETS.Domain.Entities
             Title = title;
             Qty = qty;  
             Price = price;
+        }
+
+        public void UpdateUnitSold(int qty)
+        {
+            UnitSold += qty;
         }
 
     }

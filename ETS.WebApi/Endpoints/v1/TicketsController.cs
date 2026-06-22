@@ -1,4 +1,6 @@
-﻿using ETS.Application.Tickets.Queries.GetPagedTickets;
+﻿using ETS.Application.Payment.Commands.Checkout;
+using ETS.Application.Payment.Queries.ValidateCustomerTicket;
+using ETS.Application.Tickets.Queries.GetPagedTickets;
 using ETS.Application.Tickets.Queries.GetSingleTicket;
 using ETS.Domain.Common;
 using ETS.Domain.Contracts;
@@ -48,8 +50,8 @@ namespace ETS.WebApi.Endpoints.v1
             var query = new GetSingleTicketsQuery(ticketId);
             var result = await _mediator.Send(query);
             return result.ToActionResult();
-        }
-
+        }              
+                
 
     }
 }

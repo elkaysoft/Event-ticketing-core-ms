@@ -1,5 +1,9 @@
-﻿using ETS.Application.Events.Queries.GetActiveEvent;
+﻿using ETS.Application.Events.Queries.Events;
+using ETS.Application.Events.Queries.GetActiveEvent;
 using ETS.Application.Events.Queries.GetAllActiveEvents;
+using ETS.Application.Events.Queries.GetCustomerEvent;
+using ETS.Application.Events.Queries.GetSingleEvent;
+using ETS.Application.Payment.Queries.ValidateCustomerTicket;
 using ETS.Domain.Common;
 using ETS.Domain.Contracts;
 using ETS.Domain.Extensions;
@@ -41,6 +45,33 @@ namespace ETS.WebApi.Endpoints.v1
             var result = await _mediator.Send(query);
             return result.ToActionResult();            
         }
+
+        [HttpGet("active-events/{id:Guid}")]
+        [ProducesResponseType(typeof(EventItemsDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetEventDetails(Guid id)
+        {
+            var query = new GetCustomeEventQuery(id); 
+            var result = await _mediator.Send(query);
+            return result.ToActionResult();
+        }
+
+        [HttpPost("ticket-validation")]
+        [ProducesResponseType(typeof(ValidateCustomerTicketResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ValidateCustomerTicket(List<ValidateCustomerTicketRequest> request)
+        {
+            var command = new ValidateCustomerTicketQuery(
+                request.Select(r => new CustomerTicketItemsDetails
+                {
+                    Id = r.Id,
+                    Qty = r.Qty
+                }).ToList());
+
+            var result = await _mediator.Send(command);
+            return result.ToActionResult();
+        }
+
 
 
     }

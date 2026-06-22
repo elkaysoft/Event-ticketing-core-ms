@@ -14,7 +14,7 @@ namespace ETS.Infrastructure.Authentication
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public Guid? UserId =>
+        public string? UserId =>
             Principal
             .GetUserId();
 

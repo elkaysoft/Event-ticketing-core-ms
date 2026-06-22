@@ -9,6 +9,8 @@ namespace ETS.Domain.Errors
         public static readonly Error EventCreationFailed = new("Event.Failed", "Failed to create an event");
         public static readonly Error OverlappingEventError = new("Event.OverlappingError", "There is already a running event set for the selected date");
         public static readonly Error NoActiveEventFound = new("Event.NoActiveEvent", "No active event found");
+        public static readonly Error EventCategoryTooLow = new("EventCategory.TooLow", "Qty cannot be less than total sold");
+
         public static readonly Error SomethingWentWrong = new("Event.Exception", "Something went wrong, pls try again later");
     }
 }

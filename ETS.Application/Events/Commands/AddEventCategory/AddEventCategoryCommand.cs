@@ -44,26 +44,43 @@ namespace ETS.Application.Events.Commands.AddEventCategory
 
         public async Task<Result<bool>> Handle(AddEventCategoryCommand request, CancellationToken cancellationToken)
         {
-            var existingEvent = await _eventRepository.ExistsAsync(x => x.Id == request.EventId, 
-                cancellationToken);
-            if (!existingEvent)
+            var existingEvent = await _eventRepository.GetSingleAsync(x => x.Id == request.EventId, 
+                cancellationToken,
+                includeExpressions: p => p.EventCategories);
+
+            if (existingEvent is null)
             {
                 return Result.Failure<bool>(EventErrors.NotFound);
             }
 
-            var existingEventCategory = await _eventCategoryRepository.ExistsAsync(x => x.Title == request.Title
+            var existingEventItem = await _eventCategoryRepository.ExistsAsync(x => x.Title == request.Title
                         && x.EventId == request.EventId, cancellationToken);
-            if (existingEventCategory)
+            if (existingEventItem)
             {
                 return Result.Failure<bool>(EventErrors.AlreadyExists);
             }
 
-            var eventCategory = EventCategory.Create(request.EventId, request.Title, request.Qty, request.Price);
-            _eventCategoryRepository.Add(eventCategory);
+            var allEventItems = existingEvent.EventCategories.ToList();
+
+            var eventItem = EventCategory.Create(request.EventId, request.Title, request.Qty, request.Price);
+            allEventItems.Add(eventItem);
+
+            // add the new event to memory
+            _eventCategoryRepository.Add(eventItem);
+
+            // Recalculate event items
+            RecalculateEventCategories(existingEvent, allEventItems);                                    
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return true;
         }
-    }
 
+        private void RecalculateEventCategories(Domain.Entities.Events theEvent, List<EventCategory> eventItems)
+        {
+            var total = eventItems.Any() ? eventItems.Sum(x => x.Qty) : 0;
+            theEvent.UpdateTotal(total);
+            _eventRepository.Update(theEvent);
+        }
+
+    }
 }

@@ -16,6 +16,7 @@ namespace ETS.Infrastructure.Persistence.Configuration
             builder.Property(x => x.OrderNumber).IsRequired().HasMaxLength(50);
             builder.Property(x => x.PaystackAccessCode).IsRequired().HasMaxLength(500);
             builder.Property(x => x.OrderStatus).IsRequired().HasConversion<string>();
+            builder.Property(x => x.RedemptionStatus).HasConversion<string>();
             builder.Property(x => x.TotalAmount).IsRequired().HasPrecision(10, 2);
             builder.Property(x => x.SubTotal).IsRequired().HasPrecision(10, 2);
             builder.Property(x => x.TaxAmount).IsRequired().HasPrecision(5, 2);

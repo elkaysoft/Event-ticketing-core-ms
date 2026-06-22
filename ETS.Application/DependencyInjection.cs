@@ -1,13 +1,9 @@
-﻿using AutoMapper;
-using CloudinaryDotNet;
-using ETS.Application.Abstraction.Common;
-using ETS.Application.Behaviours;
+﻿using ETS.Application.Behaviours;
 using ETS.Domain.AppConfig;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using System.Reflection;
 
 namespace ETS.Application
@@ -25,6 +21,8 @@ namespace ETS.Application
             services.AddApplicationDependency(configuration, typeof(DependencyInjection).Assembly);
             services.Configure<DefaultAdminUserSetupOptions>(configuration.GetSection("DefaultAdminUserSetup"));
             services.Configure<PaystackConfigOptions>(configuration.GetSection("PaystackServiceConfig"));
+            services.Configure<PostmarkConfigOptions>(configuration.GetSection("PostmarkServiceConfig"));
+            services.Configure<AppSettingsConfigOption>(configuration.GetSection("AppSettings"));
             
             return services;
         }

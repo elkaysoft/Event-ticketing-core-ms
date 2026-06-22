@@ -7,5 +7,6 @@
         public string CancellationUrl { get; set; }
         public string CallbackUrl { get; set; }
         public string WhitelistedIP { get; set; }
+        public decimal Fee { get; set; }
     }
 }

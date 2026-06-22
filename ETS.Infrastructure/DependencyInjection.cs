@@ -217,6 +217,7 @@ namespace ETS.Infrastructure
             services.AddSingleton<IDocumentService, DocumentService>();
             services.AddHttpClient<IMicroserviceHttpClient, MicroserviceHttpClient>();
             services.AddSingleton<IPaystackService, PaystackService>();
+            services.AddSingleton<IEmailService, EmailService>();   
 
             services.AddAuthentication(opt =>
             {

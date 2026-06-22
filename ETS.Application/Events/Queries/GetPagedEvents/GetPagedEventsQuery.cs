@@ -57,7 +57,8 @@ namespace ETS.Application.Events.Queries.GetPagedEvents
                 Title = v.Title,
                 StartTime = v.KickoffTime,
                 Location = v.Location,
-                PublishStatus = v.PublishStatus
+                PublishStatus = v.PublishStatus,
+                TotalTickets = v.EventCategories.Sum(x => x.Qty)
             };
         }
 
@@ -74,16 +75,11 @@ namespace ETS.Application.Events.Queries.GetPagedEvents
                 request.PageSize,
                 sort,
                 request.IsAscending,
+                includeExpressions: p => p.EventCategories,
                 cancellationToken: cancellationToken);
 
             return events;
         }
-
-
-        //private async Task<int> GetTicketSoldByEvent()
-        //{
-
-        //}
     }
 
 }

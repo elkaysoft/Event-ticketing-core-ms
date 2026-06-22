@@ -58,7 +58,8 @@ namespace ETS.Application.Payment.Commands.Checkout
         public async Task<Result<CheckoutCommandResponse>> Handle(CheckoutCommand request, CancellationToken cancellationToken)
         {
             var ticketCategoryIds = request.TicketDetail.Select(x => x.TicketId).ToList();
-            var eventCategories = await _eventCategoryRepository.GetEventCategoriesByIds(ticketCategoryIds, cancellationToken);
+            var eventCategories = await _eventCategoryRepository.GetEventCategoriesByIds(ticketCategoryIds,
+                cancellationToken);
             if (!eventCategories.Any())
             {
                 return Result.Failure<CheckoutCommandResponse>(CustomerErrors.InvalidEventId);

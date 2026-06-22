@@ -15,6 +15,7 @@ namespace ETS.Infrastructure.Persistence.DbContexts
             modelBuilder.RegisterAllEntities(typeof(AuditLog).Assembly);
             modelBuilder.ApplySoftDeleteFilters();
             modelBuilder.Entity<Order>().Property(x => x.OrderStatus).HasConversion<string>();
+            modelBuilder.Entity<Order>().Property(x => x.RedemptionStatus).HasConversion<string>();
 
             base.OnModelCreating(modelBuilder);
         }

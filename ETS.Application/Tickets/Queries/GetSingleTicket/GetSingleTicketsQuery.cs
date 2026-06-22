@@ -39,6 +39,8 @@ namespace ETS.Application.Tickets.Queries.GetSingleTicket
                     EmailAddress= ticket.EmailAddress,
                     PhoneNumber = ticket.PhoneNumber,
                     Address = ticket.Event.Location,
+                    RedemptionStatus = ticket.RedemptionStatus,
+                    PaymentStatus = ticket.OrderStatus,
                     Details = ticket.OrderItems.Select(x => new GetSingleTicketDetails
                     {
                         Category = x.Title,

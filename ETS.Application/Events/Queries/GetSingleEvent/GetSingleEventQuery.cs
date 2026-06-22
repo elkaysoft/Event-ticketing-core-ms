@@ -51,6 +51,7 @@ namespace ETS.Application.Events.Queries.GetSingleEvent
                 EndTime = eventResult.EndTime,
                 BannerUrl = eventResult.BannerUrl,
                 PublishStatus = eventResult.PublishStatus,
+                TotalTickets = eventResult.ItemCount,
                 EventCategories = eventResult.EventCategories.Select(x => new EventCategoryItemsDto
                 {
                     Id = x.Id,

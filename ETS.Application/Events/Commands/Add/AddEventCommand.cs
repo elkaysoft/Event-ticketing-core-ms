@@ -151,7 +151,8 @@ namespace ETS.Application.Events.Commands.Add
                     request.EventDate, 
                     request.StartTime,
                     request.EndTime,
-                    request.PublishStatus);
+                    request.PublishStatus,
+                    request.EventCategories.Sum(x => x.Qty));
 
                 _eventRepository.Add(newEvent);
 

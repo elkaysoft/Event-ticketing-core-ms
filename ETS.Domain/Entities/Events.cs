@@ -15,6 +15,7 @@ namespace ETS.Domain.Entities
         public string KickoffTime { get; private set; } = string.Empty;
         public string EndTime { get; private set; } = string.Empty;
         public PublishStatus PublishStatus { get; private set; } = PublishStatus.Draft;
+        public int ItemCount { get; set; }
         public virtual IReadOnlyCollection<EventCategory> EventCategories { get; set; }
 
         /// <summary>
@@ -35,7 +36,8 @@ namespace ETS.Domain.Entities
             DateTime eventDate,
             string kickoffTime,
             string endTime,
-            PublishStatus publishStatus)
+            PublishStatus publishStatus,
+            int total)
         {
             var events = new Events
             {
@@ -47,7 +49,8 @@ namespace ETS.Domain.Entities
                 EventDate = eventDate,
                 KickoffTime = kickoffTime,
                 EndTime = endTime,
-                PublishStatus = publishStatus
+                PublishStatus = publishStatus,
+                ItemCount = total
             };
 
             return events;
@@ -74,5 +77,11 @@ namespace ETS.Domain.Entities
             KickoffTime = kickoffTime;
             EndTime = endTime;
         }
+        
+        public void UpdateTotal(int total)
+        {
+            ItemCount = total;
+        }
+
     }
 }

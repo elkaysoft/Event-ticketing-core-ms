@@ -13,9 +13,11 @@ namespace ETS.Domain.Entities
         public string OrderNumber { get; set; }
         public string PaystackAccessCode { get; set; }
         public OrderStatus OrderStatus  { get; set; }
-        public DateTime? PaymentConfirmedAt { get; set; }
-        public DateTime? CompletedAt { get; set; }
+        public DateTime? PaymentConfirmedAt { get; set; }        
         public DateTime? CancelledAt { get; set; }
+        public TicketStatus RedemptionStatus { get; set; }
+        public DateTime? RedemptionDate { get; set; }
+
         public string? CancelletionReason { get; set; }
         public decimal SubTotal { get; set; }
         public decimal TaxAmount { get; set; }
@@ -58,8 +60,16 @@ namespace ETS.Domain.Entities
         public void UpdateStatus(OrderStatus orderStatus)
         {
             OrderStatus = orderStatus;
-            PaymentConfirmedAt = DateTime.UtcNow;
-            CompletedAt = DateTime.UtcNow;
+            if (orderStatus == OrderStatus.Cancelled)
+                CancelledAt = DateTime.UtcNow;
+            else
+                PaymentConfirmedAt = DateTime.UtcNow;
+        }
+
+        public void RedeemTicket()
+        {
+            RedemptionStatus = TicketStatus.Redeemed;
+            RedemptionDate = DateTime.UtcNow;
         }
 
     }
