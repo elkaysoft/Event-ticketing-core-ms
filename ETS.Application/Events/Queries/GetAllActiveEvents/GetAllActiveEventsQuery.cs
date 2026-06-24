@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 
 namespace ETS.Application.Events.Queries.GetAllActiveEvents
 {
-    public record GetAllActiveEventsQuery() : PaginationQuery, IQuery<PaginatedList<GetActiveEventDto>>;
+    public record GetAllActiveEventsQuery(string? SortField = null) : PaginationQuery, IQuery<PaginatedList<GetActiveEventDto>>;
 
     public class GetAllActiveEventsQueryHandler : IQueryHandler<GetAllActiveEventsQuery, PaginatedList<GetActiveEventDto>>
     {
@@ -33,6 +33,14 @@ namespace ETS.Application.Events.Queries.GetAllActiveEvents
             };
         }
 
+        private static Expression<Func<Domain.Entities.Events, object>> GetSortProperty(GetAllActiveEventsQuery request) =>
+          request.SortField?.ToLower() switch
+          {
+              "startdate" => p => p.EventDate,
+              _ => p => p.CreatedAt
+          };
+
+
         private static Expression<Func<Domain.Entities.Events, bool>> GetQueryExpression(GetAllActiveEventsQuery request) => u =>
            u.PublishStatus == Domain.Enums.PublishStatus.Published
                         && u.EventDate >= DateTime.UtcNow;
@@ -40,13 +48,14 @@ namespace ETS.Application.Events.Queries.GetAllActiveEvents
         public async Task<Result<PaginatedList<GetActiveEventDto>>> Handle(GetAllActiveEventsQuery request, CancellationToken cancellationToken)
         {
             var filter = GetQueryExpression(request);
+            var sort = GetSortProperty(request);
 
-            var events = await _eventRepository.GetPaginatedAsync<GetActiveEventDto>(
+            var events = await _eventRepository.GetPaginatedAsync(
                 filter,
                 Selector(),
                 request.PageNumber,
                 request.PageSize,
-                null!,
+                sort,
                 false,
                 cancellationToken: cancellationToken);
 

@@ -41,7 +41,9 @@ namespace ETS.Application.Tickets.Queries.GetPagedTickets
                 FullName = v.FullName,
                 Qty = v.TotalTickets,
                 TicketNumber = v.OrderNumber,
-                Title = v.EventName
+                Title = v.EventName,
+                EventDate = v.Event.EventDate,
+                EventName = v.Event.Title
             };
         }
 
@@ -65,7 +67,8 @@ namespace ETS.Application.Tickets.Queries.GetPagedTickets
               request.PageSize,
               sort,
               false,
-              cancellationToken: cancellationToken);
+              cancellationToken: cancellationToken,
+              includeExpressions: ev => ev.Event);
 
             return tickets;
         }

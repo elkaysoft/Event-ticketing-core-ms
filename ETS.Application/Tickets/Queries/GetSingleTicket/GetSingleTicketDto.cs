@@ -9,6 +9,8 @@ namespace ETS.Application.Tickets.Queries.GetSingleTicket
         public string PhoneNumber { get; set; }
         public string Address { get; set; }
         public DateTime DateRegistered { get; set; }
+        public DateTime EventDate { get; set; }
+        public string EventName { get; set; }
         public OrderStatus PaymentStatus { get; set; }
         public TicketStatus RedemptionStatus { get; set; }
         public List<GetSingleTicketDetails> Details { get; set; }

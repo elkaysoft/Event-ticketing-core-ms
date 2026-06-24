@@ -25,7 +25,7 @@ namespace ETS.Application.Tickets.Queries.GetSingleTicket
             {
                 var ticket = await _orderRepository.GetSingleAsync(x => x.Id == request.TicketId, 
                     cancellationToken, 
-                    includeExpressions: [oi => oi.OrderItems]);
+                    includeExpressions: [oi => oi.OrderItems, ev => ev.Event]);
 
                 if(ticket is null)
                 {
@@ -41,6 +41,8 @@ namespace ETS.Application.Tickets.Queries.GetSingleTicket
                     Address = ticket.Event.Location,
                     RedemptionStatus = ticket.RedemptionStatus,
                     PaymentStatus = ticket.OrderStatus,
+                    EventDate = ticket.Event.EventDate,
+                    EventName = ticket.EventName,
                     Details = ticket.OrderItems.Select(x => new GetSingleTicketDetails
                     {
                         Category = x.Title,
