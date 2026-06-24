@@ -175,7 +175,7 @@ namespace ETS.Application.Payment.Commands.Complete
             if (orderResult == null)
             {
                 _logger.LogWarning($"Order not found for {webhookWrapper.Data.reference}");
-                return false;
+                return Result.Failure<bool>(new Error("Order.NotFound", "The order reference is not founds malformed"));
             }
 
             var orderStatus = webhookWrapper.Data.status.ToLower() == "success" ? OrderStatus.Completed : OrderStatus.Cancelled;

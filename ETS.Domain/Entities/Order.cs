@@ -17,7 +17,7 @@ namespace ETS.Domain.Entities
         public DateTime? CancelledAt { get; set; }
         public TicketStatus RedemptionStatus { get; set; }
         public DateTime? RedemptionDate { get; set; }
-
+        public bool IsTicketGenerated { get; set; }
         public string? CancelletionReason { get; set; }
         public decimal SubTotal { get; set; }
         public decimal TaxAmount { get; set; }

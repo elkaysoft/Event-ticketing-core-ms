@@ -20,6 +20,7 @@ namespace ETS.Infrastructure.Persistence.Configuration
             builder.Property(x => x.TotalAmount).IsRequired().HasPrecision(10, 2);
             builder.Property(x => x.SubTotal).IsRequired().HasPrecision(10, 2);
             builder.Property(x => x.TaxAmount).IsRequired().HasPrecision(5, 2);
+            builder.Property(x => x.IsTicketGenerated).HasDefaultValue(false);
 
             builder.HasMany(x => x.OrderItems)
                 .WithOne(x => x.Order)
