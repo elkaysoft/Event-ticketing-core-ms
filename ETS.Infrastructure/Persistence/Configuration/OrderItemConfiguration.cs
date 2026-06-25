@@ -14,7 +14,9 @@ namespace ETS.Infrastructure.Persistence.Configuration
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Unit).IsRequired();
             builder.Property(x => x.UnitPrice).IsRequired().HasColumnType("decimal(18,2)");
-            builder.Property(x => x.TicketStatus).HasConversion<string>();
+            builder.Property(x => x.RedemptionStatus).HasConversion<string>();
+            builder.Property(x => x.TicketGenerationStatus).HasConversion<string>();
+            builder.Property(x => x.PaymentStatus).HasConversion<string>();
             builder.Property(x => x.QRCodeReference).HasMaxLength(250);
             builder.Property(x => x.QRCodeUrl).HasMaxLength(500);
 

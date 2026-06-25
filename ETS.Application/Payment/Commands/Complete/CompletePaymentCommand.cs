@@ -171,7 +171,8 @@ namespace ETS.Application.Payment.Commands.Complete
                 return Result.Failure<bool>(new Error("Payment.MalformePayload", "The payload is malformed"));
             }
             
-            var orderResult = await _orderRepository.GetSingleAsync(x => x.OrderNumber == webhookWrapper.Data.reference);
+            var orderResult = await _orderRepository.GetSingleAsync(x => x.OrderNumber == webhookWrapper.Data.reference,
+                        includeExpressions: oi => oi.OrderItems);
             if (orderResult == null)
             {
                 _logger.LogWarning($"Order not found for {webhookWrapper.Data.reference}");
@@ -189,8 +190,17 @@ namespace ETS.Application.Payment.Commands.Complete
                 {
                     category.RemoveFromUnitSold(category.Qty);
                 }
-            }            
-            
+            }
+
+            var orderItems = orderResult.OrderItems;
+            if (orderItems.Any())
+            {
+                foreach (var item in orderItems)
+                {
+                    item.UpdatePaymentStatus(orderStatus);
+                }
+            }
+
             orderResult.UpdateStatus(orderStatus);                        
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
