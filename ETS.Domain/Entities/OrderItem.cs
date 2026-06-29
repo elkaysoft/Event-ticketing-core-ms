@@ -16,6 +16,9 @@ namespace ETS.Domain.Entities
         public TicketStatus RedemptionStatus { get; private set; }
         public TicketGenerationStatus TicketGenerationStatus { get; set; }
         public OrderStatus PaymentStatus { get; set; }
+        public string? LockOwnerId { get; set; }
+        public DateTime? LockTimeStamp { get; set; }
+        public int RetryCount { get; set; }
         public virtual EventCategory EventCategory { get; set; }
         public virtual Order Order { get; set; }
 
