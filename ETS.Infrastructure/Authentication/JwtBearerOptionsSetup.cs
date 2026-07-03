@@ -59,7 +59,6 @@ namespace ETS.Infrastructure.Authentication
                 c.HttpContext.Items["AuthFailure"] = c.Exception;
                 return Task.CompletedTask;
             },
-
             OnChallenge = context =>
             {
                 context.HandleResponse(); // suppress ASP.NET default response
@@ -82,7 +81,6 @@ namespace ETS.Infrastructure.Authentication
                 context.Response.ContentType = "application/json";
                 return context.Response.WriteAsync(JsonSerializer.Serialize(new { message }));
             },
-
             OnForbidden = context =>
             {
                 if (context.Response.HasStarted) return Task.CompletedTask;

@@ -71,7 +71,7 @@ namespace ETS.Infrastructure.Services
                     Subject = new ClaimsIdentity(claims),
                     Audience = _authOptions.Audience,
                     IssuedAt = DateTime.UtcNow,
-                    NotBefore = DateTime.UtcNow,
+                    NotBefore = DateTime.UtcNow,                    
                     SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.RsaSha256)
                 };
 

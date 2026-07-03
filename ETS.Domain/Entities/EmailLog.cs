@@ -10,7 +10,7 @@ namespace ETS.Domain.Entities
         public string Subject { get; set; }
         public string Body { get; set; }
         public NotificationStatusEnum NotificationStatus { get; set; }
-        public NotificationTargetEnum NotificationTarget { get; set; }
+        public NotificationTargetEnum NotificationTarget { get; set; }       
         public string? ResponseData { get; set; }
         public int RetryCount { get; set; }
     }
