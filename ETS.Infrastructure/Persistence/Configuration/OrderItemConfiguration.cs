@@ -20,6 +20,10 @@ namespace ETS.Infrastructure.Persistence.Configuration
             builder.Property(x => x.QRCodeReference).HasMaxLength(250);
             builder.Property(x => x.QRCodeUrl).HasMaxLength(500);
 
+            builder.Property(x => x.RowVersion)
+                .IsRowVersion()
+                .IsConcurrencyToken();
+
             builder.HasOne(x => x.EventCategory)
                 .WithMany()
                 .HasForeignKey(x => x.EventCategoryId)

@@ -15,5 +15,10 @@ namespace ETS.Infrastructure.Repositories
         {
             return await GetAllAsync(ec => ids.Contains(ec.Id), cancellationToken);
         }
+
+        public async Task ReloadAsync(OrderItem entity, CancellationToken cancellationToken = default)
+        {
+            await _writeDbContext.Entry(entity).ReloadAsync(cancellationToken);
+        }
     }
 }

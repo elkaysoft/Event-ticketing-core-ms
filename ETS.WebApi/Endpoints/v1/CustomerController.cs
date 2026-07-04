@@ -4,6 +4,7 @@ using ETS.Application.Events.Queries.GetAllActiveEvents;
 using ETS.Application.Events.Queries.GetCustomerEvent;
 using ETS.Application.Events.Queries.GetSingleEvent;
 using ETS.Application.Payment.Queries.ValidateCustomerTicket;
+using ETS.Application.Tickets.Queries.VerifyTicket;
 using ETS.Domain.Common;
 using ETS.Domain.Contracts;
 using ETS.Domain.Extensions;
@@ -69,6 +70,17 @@ namespace ETS.WebApi.Endpoints.v1
                 }).ToList());
 
             var result = await _mediator.Send(command);
+            return result.ToActionResult();
+        }
+
+        [AllowAnonymous]
+        [HttpGet("verifyQR/{qrCodeReference}")]
+        [ProducesResponseType(typeof(VerifyTicketResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> VerifyTicket([FromRoute] string qrCodeReference,
+                CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new VerifyTicketQuery(qrCodeReference), cancellationToken);
             return result.ToActionResult();
         }
 

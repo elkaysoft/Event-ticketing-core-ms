@@ -4,6 +4,7 @@
     {
         Pending,
         Generated,
-        Failed
+        Failed,
+        Completed,
     }
 }

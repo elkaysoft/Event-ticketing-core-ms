@@ -1,6 +1,7 @@
 ﻿using ETS.Domain.Common;
 using ETS.Domain.Enums;
 using ETS.Domain.Extensions;
+using System.ComponentModel.DataAnnotations;
 
 namespace ETS.Domain.Entities
 {
@@ -19,6 +20,8 @@ namespace ETS.Domain.Entities
         public string? LockOwnerId { get; set; }
         public DateTime? LockTimeStamp { get; set; }
         public int RetryCount { get; set; }
+        [Timestamp]
+        public byte[]? RowVersion { get; set; } // EF Core uses this for concurrency checking
         public virtual EventCategory EventCategory { get; set; }
         public virtual Order Order { get; set; }
 
@@ -40,6 +43,11 @@ namespace ETS.Domain.Entities
         public void UpdatePaymentStatus(OrderStatus paymentStatus)
         {
             PaymentStatus = paymentStatus;
+        }
+
+        public void ChangeRedemptionStatus(TicketStatus redemptionStatus) 
+        {
+            RedemptionStatus = redemptionStatus;
         }
     }
 }

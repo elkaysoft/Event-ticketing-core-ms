@@ -16,6 +16,9 @@ namespace ETS.Infrastructure.Persistence.DbContexts
             modelBuilder.ApplySoftDeleteFilters();
             modelBuilder.Entity<Order>().Property(x => x.OrderStatus).HasConversion<string>();
             modelBuilder.Entity<Order>().Property(x => x.RedemptionStatus).HasConversion<string>();
+            modelBuilder.Entity<OrderItem>().Property(x => x.RedemptionStatus).HasConversion<string>();
+            modelBuilder.Entity<OrderItem>().Property(x => x.PaymentStatus).HasConversion<string>();
+            modelBuilder.Entity<OrderItem>().Property(x => x.TicketGenerationStatus).HasConversion<string>();
 
             base.OnModelCreating(modelBuilder);
         }
